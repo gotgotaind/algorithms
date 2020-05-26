@@ -164,9 +164,10 @@ public class Percolation {
         p.open(2,1);
         p.open(3,3);
         System.out.println(p.percolates());
+        System.out.println(p.numberOfOpenSites());
         p.open(3,2);
         System.out.println(p.percolates());
-
+        System.out.println(p.numberOfOpenSites());
 
     }
 }
