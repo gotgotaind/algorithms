@@ -2,9 +2,9 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private Boolean [][] grid;
-    private WeightedQuickUnionUF union;
-    private int size;
+    private boolean [][] grid;
+    private final WeightedQuickUnionUF union;
+    private final int size;
     private int open_sites;
     private boolean isPercolates;
 
@@ -23,7 +23,7 @@ public class Percolation {
             throw new IllegalArgumentException("grid size must be positive");
         }
 
-        grid = new Boolean[n][n];
+        grid = new boolean[n][n];
         open_sites=0;
         isPercolates=false;
 
@@ -56,10 +56,10 @@ public class Percolation {
     public void open(int row, int col) {
 
 
-        if ( (row < 1) | ( row > size) ) {
+        if ( (row < 1) || ( row > size) ) {
             throw new IllegalArgumentException("row must be between 1 and n");
         }
-        if ( (col < 1) | (col >size) ) {
+        if ( (col < 1) || (col >size) ) {
             throw new IllegalArgumentException("col must be between 1 and n");
         }
 
@@ -120,10 +120,10 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        if ( (row < 1) | ( row > size) ) {
+        if ( (row < 1) || ( row > size) ) {
             throw new IllegalArgumentException("row must be between 1 and n");
         }
-        if ( (col < 1) | (col >size) ) {
+        if ( (col < 1) || (col >size) ) {
             throw new IllegalArgumentException("col must be between 1 and n");
         }
 
@@ -132,10 +132,10 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        if ( (row < 1) | ( row > size) ) {
+        if ( (row < 1) || ( row > size) ) {
             throw new IllegalArgumentException("row must be between 1 and n");
         }
-        if ( (col < 1) | (col >size) ) {
+        if ( (col < 1) || (col >size) ) {
             throw new IllegalArgumentException("col must be between 1 and n");
         }
 
