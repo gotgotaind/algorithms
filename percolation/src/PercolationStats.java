@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
+import edu.princeton.cs.algs4.StdOut;
 
 public class PercolationStats {
 
@@ -63,11 +64,13 @@ public class PercolationStats {
 
     // test client (see below)
     public static void main(String[] args) {
-        PercolationStats ps=new PercolationStats(200,100);
-        System.out.println(ps.mean());
-        System.out.println("ps.stddev() = " + ps.stddev());
-        System.out.println("ps.confidenceLo() = " + ps.confidenceLo());
-        System.out.println("ps.confidenceHi() = " + ps.confidenceHi());
+        int n = Integer.parseInt(args[0]);
+        int T = Integer.parseInt(args[1]);
+        PercolationStats ps=new PercolationStats(n,T);
+        StdOut.println("ps.mean() = " + ps.mean());
+        StdOut.println("ps.stddev() = " + ps.stddev());
+        StdOut.println("ps.confidenceLo() = " + ps.confidenceLo());
+        StdOut.println("ps.confidenceHi() = " + ps.confidenceHi());
     }
 
 }
