@@ -110,10 +110,13 @@ public class Percolation {
             if ( isFull(row,col) ) {
 
                 // does it connect to pseudo bottom row
-                boolean connect_bottom=(union.find(getUnionId(row,col))==union.find(size*size+1+col-1));
-                if ( connect_bottom ) {
-                    isPercolates=true;
+                for( int i = 0 ; i < size ; i++ ) {
+                    boolean connect_bottom = (union.find(getUnionId(row, col)) == union.find(size * size + 1 + i ));
+                    if ( connect_bottom ) {
+                        isPercolates=true;
+                    }
                 }
+
             }
 
 

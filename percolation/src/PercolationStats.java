@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class PercolationStats {
 
-    private double mean,dev,clow,chigh;
+    private final double mean,dev,clow,chigh;
 
     // perform independent trials on an n-by-n grid
     public PercolationStats(int n, int trials){
