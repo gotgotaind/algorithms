@@ -23,12 +23,13 @@ public class Percolation {
             throw new IllegalArgumentException("grid size must be positive");
         }
 
-        grid = new boolean[n][n];
+        grid = new boolean[n+1][n];
         open_sites=0;
         isPercolates=false;
 
-        // +2 because we have a pseaudo first and last row
-        union = new WeightedQuickUnionUF((n*n)+2);
+        // +1 because we have a pseudo first row
+        // + n because we have a pseudo last row of size length to avoid backwash
+        union = new WeightedQuickUnionUF((n*n)+1+n);
         size=n;
 
         // first row is pseudo open row
@@ -38,10 +39,12 @@ public class Percolation {
         }*/
 
         // last row is pseudo open row
-/*        for (int c = 0; c < n; c++)
+/*
+        for (int c = 0; c < n; c++)
         {
             union.union((n+1)*n,(n+1)*n+c);
-        }*/
+        }
+*/
 
         for (int r = 0; r < n; r++)
         {
@@ -74,7 +77,7 @@ public class Percolation {
 
             // Union with bottom pseudo row
             if ( grow == (size-1) ) {
-                union.union(getUnionId(row,col),(size*size)+1);
+                union.union(getUnionId(row,col),(size*size)+1+col-1);
             }
 
             if ( grow < (size-1) ) {
@@ -107,7 +110,7 @@ public class Percolation {
             if ( isFull(row,col) ) {
 
                 // does it connect to pseudo bottom row
-                boolean connect_bottom=(union.find(getUnionId(row,col))==union.find(size*size+1));
+                boolean connect_bottom=(union.find(getUnionId(row,col))==union.find(size*size+1+col-1));
                 if ( connect_bottom ) {
                     isPercolates=true;
                 }
