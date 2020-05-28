@@ -9,11 +9,12 @@ public class PercolationStats {
     // perform independent trials on an n-by-n grid
     public PercolationStats(int n, int trials){
 
-        if ( n < 2 ) {
+        if ( n < 1 ) {
             throw new IllegalArgumentException("n must be > 0");
         }
-        if ( trials < 2 ) {
-            throw new IllegalArgumentException("trials must be > 0");
+        if ( trials < 1 ) {
+            // this fails grader tests : StdOut.println("trials = " + trials);
+            throw new IllegalArgumentException("triaals : "+trials+" must be > 0");
         }
         int row=-1;
         int col=-1;

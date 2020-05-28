@@ -3,7 +3,8 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
 
     private boolean [][] grid;
-    private final WeightedQuickUnionUF union;
+    private final WeightedQuickUnionUF union_ispercolates;
+    private final WeightedQuickUnionUF union_isfull;
     private final int size;
     private int open_sites;
     private boolean isPercolates;
@@ -23,13 +24,14 @@ public class Percolation {
             throw new IllegalArgumentException("grid size must be positive");
         }
 
-        grid = new boolean[n+1][n];
+        grid = new boolean[n][n];
         open_sites=0;
         isPercolates=false;
 
-        // +1 because we have a pseudo first row
-        // + n because we have a pseudo last row of size length to avoid backwash
-        union = new WeightedQuickUnionUF((n*n)+1+n);
+        // +2 because we have a pseudo first and bottom row
+        union_ispercolates = new WeightedQuickUnionUF((n*n)+2);
+        // +1 because we only have a pseudo first row
+        union_isfull = new WeightedQuickUnionUF((n*n)+1);
         size=n;
 
         // first row is pseudo open row
@@ -77,47 +79,48 @@ public class Percolation {
 
             // Union with bottom pseudo row
             if ( grow == (size-1) ) {
-                union.union(getUnionId(row,col),(size*size)+1+col-1);
+                union_ispercolates.union(getUnionId(row,col),(size*size)+1);
             }
 
+            // Union with down
             if ( grow < (size-1) ) {
                 if (isOpen(row + 1, col)) {
-                    union.union(getUnionId(row,col),getUnionId(row+1,col));
+                    union_ispercolates.union(getUnionId(row,col),getUnionId(row+1,col));
+                    union_isfull.union(getUnionId(row,col),getUnionId(row+1,col));
                 }
             }
 
             // Union with top pseudo row
             if ( grow == 0 ) {
-                    union.union(getUnionId(row,col),0);
+                union_ispercolates.union(getUnionId(row,col),0);
+                union_isfull.union(getUnionId(row,col),0);
             }
 
+            // union with above
             if ( grow > 0 ) {
                 if (isOpen(row - 1, col)) {
-                    union.union(getUnionId(row,col),getUnionId(row-1,col));
+                    union_ispercolates.union(getUnionId(row,col),getUnionId(row-1,col));
+                    union_isfull.union(getUnionId(row,col),getUnionId(row-1,col));
                 }
             }
+
+            // union with left
             if ( gcol > 0 ) {
                 if (isOpen(row , col-1)) {
-                    union.union(getUnionId(row,col),getUnionId(row,col-1));
+                    union_ispercolates.union(getUnionId(row,col),getUnionId(row,col-1));
+                    union_isfull.union(getUnionId(row,col),getUnionId(row,col-1));
                 }
             }
+
+            // union with right
             if ( gcol < (size-1) ) {
                 if (isOpen(row , col+1)) {
-                    union.union(getUnionId(row,col),getUnionId(row,col+1));
+                    union_ispercolates.union(getUnionId(row,col),getUnionId(row,col+1));
+                    union_isfull.union(getUnionId(row,col),getUnionId(row,col+1));
                 }
             }
 
-            if ( isFull(row,col) ) {
 
-                // does it connect to pseudo bottom row
-                for( int i = 0 ; i < size ; i++ ) {
-                    boolean connect_bottom = (union.find(getUnionId(row, col)) == union.find(size * size + 1 + i ));
-                    if ( connect_bottom ) {
-                        isPercolates=true;
-                    }
-                }
-
-            }
 
 
         }
@@ -145,8 +148,8 @@ public class Percolation {
             throw new IllegalArgumentException("col must be between 1 and n");
         }
 
-        int current_unionid=union.find(getUnionId(row,col));
-        int top_unionid=union.find(0);
+        int current_unionid=union_isfull.find(getUnionId(row,col));
+        int top_unionid=union_isfull.find(0);
 /*        System.out.println(String.format("row,col: %d,%d",row,col));
         System.out.println(String.format("current_unionid is %d",current_unionid));
         System.out.println(String.format("top_unionid is %d",top_unionid));*/
@@ -159,7 +162,16 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
+
+        // does pseaudo top row connect to pseudo bottom row
+
+            boolean connect_bottom = (union_ispercolates.find(0) == union_ispercolates.find(size * size + 1 ));
+            if ( connect_bottom ) {
+                isPercolates=true;
+            }
+
         return isPercolates;
+
     }
 
     // test client (optional)
