@@ -105,7 +105,7 @@ public class Deque<Item> implements Iterable<Item> {
     // remove and return the item from the back
     public Item removeLast() {
         if ( isEmpty() ) {
-            throw new java.util.NoSuchElementException("Trying to removeFirst while deque is empty");
+            throw new java.util.NoSuchElementException("Trying to removeLast while deque is empty");
         }
 
         Item item = last.item;
@@ -128,7 +128,33 @@ public class Deque<Item> implements Iterable<Item> {
 
     // return an iterator over items in order from front to back
     public Iterator<Item> iterator() {
-        return iterator();
+        return new DequeuIterator();
+    }
+
+    private class DequeuIterator implements Iterator<Item> {
+        private Node current=first;
+
+        public boolean hasNext() {
+            return current!=null;
+        }
+
+        public void remove() {
+            /* not supported */
+            throw new UnsupportedOperationException("remove() is not support in DequeuIterator");
+        };
+
+        public Item next() {
+
+            if ( current == null ) {
+                throw new java.util.NoSuchElementException("Trying to get next from iterator after end");
+            }
+
+            Item item = current.item;
+
+            current = current.next;
+            return item;
+        }
+
     }
 
     // unit testing (required)
@@ -171,7 +197,20 @@ public class Deque<Item> implements Iterable<Item> {
         StdOut.println("item = " + item);
         // expect 7,9,5
 
+        dq.addLast(5);
+        dq.addFirst(7);
+        dq.addLast(9);
+        // dq is 7,5,9
+        for (int i : dq)
+            StdOut.println(i);
+        // expect 7,5,9
 
+        Iterator<Integer> it=dq.iterator();
+        StdOut.println("item = " + it.next());
+        StdOut.println("item = " + it.next());
+        StdOut.println("item = " + it.next());
+        StdOut.println("item = " + it.next());
+        // expect 7,5,9
     }
 
 }
