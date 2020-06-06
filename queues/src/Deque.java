@@ -45,8 +45,8 @@ public class Deque<Item> implements Iterable<Item> {
         }
         else
         {
-            N.previous=first;
-            first.next=N;
+            N.next=first;
+            first.previous=N;
             first=N;
         }
         size=size+1;
@@ -68,8 +68,8 @@ public class Deque<Item> implements Iterable<Item> {
         }
         else
         {
-            N.next=last;
-            last.previous=N;
+            N.previous=last;
+            last.next=N;
             last=N;
         }
         size=size+1;
@@ -86,6 +86,7 @@ public class Deque<Item> implements Iterable<Item> {
 
         if ( size == 1 ) {
             first=null;
+            last=null;
         }
         else
         {
@@ -111,6 +112,7 @@ public class Deque<Item> implements Iterable<Item> {
 
         if ( size == 1 ) {
             last=null;
+            first=null;
         }
         else {
             Node oldlast = last;
@@ -132,12 +134,44 @@ public class Deque<Item> implements Iterable<Item> {
     // unit testing (required)
     public static void main(String[] args) {
         Deque<Integer> dq = new Deque<Integer>();
+
         dq.addLast(5);
         dq.addLast(7);
+        dq.addLast(9);
+        // dq is 5,7,9
         Integer item=dq.removeFirst();
         StdOut.println("item = " + item);
         item=dq.removeFirst();
         StdOut.println("item = " + item);
+        item=dq.removeFirst();
+        StdOut.println("item = " + item);
+        // expect 5,7,9
+
+        dq.addLast(5);
+        dq.addLast(7);
+        dq.addLast(9);
+        // dq is 5,7,9
+        item=dq.removeLast();
+        StdOut.println("item = " + item);
+        item=dq.removeLast();
+        StdOut.println("item = " + item);
+        item=dq.removeLast();
+        StdOut.println("item = " + item);
+        // expect 9,7,5
+
+        dq.addFirst(5);
+        dq.addLast(7);
+        dq.addFirst(9);
+        // dq is 9,5,7
+        item=dq.removeLast();
+        StdOut.println("item = " + item);
+        item=dq.removeFirst();
+        StdOut.println("item = " + item);
+        item=dq.removeLast();
+        StdOut.println("item = " + item);
+        // expect 7,9,5
+
+
     }
 
 }
