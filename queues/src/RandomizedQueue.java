@@ -52,6 +52,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         int e=StdRandom.uniform(head,tail);
         Item item=s[e];
         s[e]=s[tail-1];
+        s[tail-1]=null;
         tail=tail-1;
 
         // shrink s if half full
