@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdOut;
 public class Deque<Item> implements Iterable<Item> {
 
     private Node first,last = null;
-    private static int size = 0;
+    private int size = 0;
 
     private class Node
     {
