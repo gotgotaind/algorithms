@@ -115,7 +115,7 @@ public class Point implements Comparable<Point> {
         return this::compareSlope;
     };
 
-    private int compareSlope(Point a,Point b) {
+    private int compareSlope(Point a,Point b){
         Double slopea=this.slopeTo(a);
         Double slopeb=this.slopeTo(b);
         if( slopea == slopeb ) {
@@ -127,6 +127,7 @@ public class Point implements Comparable<Point> {
         else if ( slopea < slopeb ) {
             return -1;
         }
+        return 0;
 
     };
 
