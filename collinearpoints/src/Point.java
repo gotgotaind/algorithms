@@ -180,5 +180,17 @@ public class Point implements Comparable<Point> {
         StdOut.println("a: "+a.toString()+" b: "+b.toString()+" slope: "+a.slopeTo(b));
         assert(a.slopeTo(b)==Double.POSITIVE_INFINITY);
 
+        a=new Point(2,1);
+        Comparator<Point> so=a.slopeOrder();
+        b=new Point(3,2);
+        Point c=new Point(4,4);
+        StdOut.println("a = "+a.toString());
+        StdOut.println("b = "+b.toString());
+        StdOut.println("c = "+c.toString());
+        StdOut.println("a.slopeTo(b) = "+a.slopeTo(b));
+        StdOut.println("a.slopeTo(c) = "+a.slopeTo(c));
+        StdOut.println("a.compareSlope(b,c) = "+so.compare(b,c));
+
+
     }
 }
