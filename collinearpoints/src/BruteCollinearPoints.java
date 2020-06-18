@@ -24,16 +24,24 @@ public class BruteCollinearPoints {
         }
 
         for(int i=0;i<points.length;i++) {
-            for(int j=1;j<points.length;j++) {
-                for(int k=2;k<points.length;k++) {
-                    for(int l=3;l<points.length;l++) {
-                        Point p = points[i];
-                        Point q= points[j];
-                        Point r = points[k];
-                        Point s = points[l];
-                        if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
-                            if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(q) == p.slopeTo(s)) {
-                                segmentsQ.enqueue(new LineSegment(p,s));
+            for(int j=0;j<points.length;j++) {
+                if ( j != i ) {
+                    for (int k = 0; k < points.length; k++) {
+                        if ( k!=i && k!=j ) {
+                            for (int l = 0; l < points.length; l++) {
+                                if ( l!=i && l!=k && l!=j ) {
+                                    StdOut.println(i+","+j+","+k+","+l);
+                                    Point p = points[i];
+                                    Point q = points[j];
+                                    Point r = points[k];
+                                    Point s = points[l];
+                                    // if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
+                                    if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(q) == p.slopeTo(s)) {
+                                        segmentsQ.enqueue(new LineSegment(p, s));
+                                    }
+                                    // }
+                                }
+
                             }
                         }
                     }
