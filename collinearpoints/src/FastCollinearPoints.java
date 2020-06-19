@@ -31,39 +31,42 @@ public class FastCollinearPoints {
             }
         }
 
+        //Arrays.sort(points, points[0].slopeOrder());
         Merge.sort(points);
+
         for(int i=0;i<points.length;i++) {
-            Point[] op=new Point[points.length-1];
-            int k=0;
-            for(int j=0;j<points.length;j++) {
-                if ( j != i ) {
-                    op[k]=points[j];
-                    k=k+1;
+            //    int i=0;
+            Point[] op = new Point[points.length - 1];
+            int k = 0;
+            for (int j = 0; j < points.length; j++) {
+                if (j != i) {
+                    op[k] = points[j];
+                    k = k + 1;
                 }
             }
-            Point pi=points[i];
-            Arrays.sort(op,pi.slopeOrder());
+            Point pi = points[i];
+            Arrays.sort(op, pi.slopeOrder());
+            //Merge.sort(op);
 
-            Point start_segment=op[0];
-            double slope=pi.slopeTo(start_segment);
-            int cocount=1;
+            Point start_segment = op[0];
+            double slope = pi.slopeTo(start_segment);
+            int cocount = 1;
 
-            for(int j=1;j<points.length-1;j++) {
-                if( pi.slopeTo(op[j]) == slope ) {
-                    cocount=cocount+1;
-                }
-                else {
-                    if ( cocount >= 4 ) {
-                        segmentsQ.enqueue(new LineSegment(start_segment, op[j-1]));
+            for (int j = 1; j < points.length - 1; j++) {
+                if (pi.slopeTo(op[j]) == slope) {
+                    cocount = cocount + 1;
+                } else {
+                    if (cocount >= 4) {
+                        segmentsQ.enqueue(new LineSegment(start_segment, op[j - 1]));
                     }
-                    start_segment=op[j];
-                    slope=pi.slopeTo(op[j]);
-                    cocount=1;
+                    start_segment = op[j];
+                    slope = pi.slopeTo(op[j]);
+                    cocount = 1;
                 }
 
             }
-
         }
+
     }
     public           int numberOfSegments()        // the number of line segments
     {
@@ -102,7 +105,7 @@ public class FastCollinearPoints {
         StdDraw.show();
 
         // print and draw the line segments
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
         StdOut.println("Found "+collinear.numberOfSegments()+" segments.");
         StdOut.println("Showing segments :");
         for (LineSegment segment : collinear.segments()) {
@@ -111,7 +114,7 @@ public class FastCollinearPoints {
         }
         StdOut.println("StdDraw.show();");
         StdDraw.show();
-        StdOut.println("ZOBI");
+        StdOut.println("ZOBA");
     }
 
 }
