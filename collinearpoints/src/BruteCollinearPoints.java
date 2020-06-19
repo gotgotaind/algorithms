@@ -30,16 +30,16 @@ public class BruteCollinearPoints {
                         if ( k!=i && k!=j ) {
                             for (int l = 0; l < points.length; l++) {
                                 if ( l!=i && l!=k && l!=j ) {
-                                    StdOut.println(i+","+j+","+k+","+l);
+                                    //StdOut.println(i+","+j+","+k+","+l);
                                     Point p = points[i];
                                     Point q = points[j];
                                     Point r = points[k];
                                     Point s = points[l];
-                                    // if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
+                                    if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
                                     if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(q) == p.slopeTo(s)) {
                                         segmentsQ.enqueue(new LineSegment(p, s));
                                     }
-                                    // }
+                                    }
                                 }
 
                             }
@@ -87,6 +87,7 @@ public class BruteCollinearPoints {
 
         // print and draw the line segments
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        StdOut.println("Found "+collinear.numberOfSegments()+" segments.");
         StdOut.println("Showing segments :");
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
