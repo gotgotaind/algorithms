@@ -1,12 +1,17 @@
+
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.Merge;
 
-public class BruteCollinearPoints {
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+public class FastCollinearPoints {
     static Queue<LineSegment> segmentsQ=new Queue();
 
-    public BruteCollinearPoints(Point[] points)    // finds all line segments containing 4 points
+    public FastCollinearPoints(Point[] points)    // finds all line segments containing 4 points
     {
         if ( points == null ) {
             throw new IllegalArgumentException("points is null");
@@ -26,30 +31,38 @@ public class BruteCollinearPoints {
             }
         }
 
+        Merge.sort(points);
         for(int i=0;i<points.length;i++) {
+            Point[] op=new Point[points.length-1];
+            int k=0;
             for(int j=0;j<points.length;j++) {
                 if ( j != i ) {
-                    for (int k = 0; k < points.length; k++) {
-                        if ( k!=i && k!=j ) {
-                            for (int l = 0; l < points.length; l++) {
-                                if ( l!=i && l!=k && l!=j ) {
-                                    //StdOut.println(i+","+j+","+k+","+l);
-                                    Point p = points[i];
-                                    Point q = points[j];
-                                    Point r = points[k];
-                                    Point s = points[l];
-                                    if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
-                                    if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(q) == p.slopeTo(s)) {
-                                        segmentsQ.enqueue(new LineSegment(p, s));
-                                    }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
+                    op[k]=points[j];
+                    k=k+1;
                 }
             }
+            Point pi=points[i];
+            Arrays.sort(op,pi.slopeOrder());
+
+            Point start_segment=op[0];
+            double slope=pi.slopeTo(start_segment);
+            int cocount=1;
+
+            for(int j=1;j<points.length-1;j++) {
+                if( pi.slopeTo(op[j]) == slope ) {
+                    cocount=cocount+1;
+                }
+                else {
+                    if ( cocount >= 4 ) {
+                        segmentsQ.enqueue(new LineSegment(start_segment, op[j-1]));
+                    }
+                    start_segment=op[j];
+                    slope=pi.slopeTo(op[j]);
+                    cocount=1;
+                }
+
+            }
+
         }
     }
     public           int numberOfSegments()        // the number of line segments
