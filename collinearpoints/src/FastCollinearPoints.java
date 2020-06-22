@@ -8,6 +8,8 @@ import edu.princeton.cs.algs4.Merge;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+import static java.lang.Double.compare;
+
 public class FastCollinearPoints {
     static Queue<LineSegment> segmentsQ=new Queue();
 
@@ -32,10 +34,11 @@ public class FastCollinearPoints {
         }
 
         //Arrays.sort(points, points[0].slopeOrder());
-        Merge.sort(points);
+        //Merge.sort(points);
 
         for(int i=0;i<points.length;i++) {
             //    int i=0;
+
             Point[] op = new Point[points.length - 1];
             int k = 0;
             for (int j = 0; j < points.length; j++) {
@@ -45,23 +48,44 @@ public class FastCollinearPoints {
                 }
             }
             Point pi = points[i];
+            // StdOut.println("Pivot  point : "+pi);
+            Merge.sort(op);
             Arrays.sort(op, pi.slopeOrder());
-            //Merge.sort(op);
+
 
             Point start_segment = op[0];
             double slope = pi.slopeTo(start_segment);
-            int cocount = 1;
+            int seglen = 2;
+            // StdOut.println("first slope ordered slope compare :"+pi+" "+op[0]+" : "+slope);
+            boolean backflow=false;
+            if( pi.compareTo(op[0])>0 ) {
+                StdOut.println("Backflow!");
+                backflow=true;
+            }
 
             for (int j = 1; j < points.length - 1; j++) {
-                if (pi.slopeTo(op[j]) == slope) {
-                    cocount = cocount + 1;
-                } else {
-                    if (cocount >= 4) {
-                        segmentsQ.enqueue(new LineSegment(start_segment, op[j - 1]));
+                if (pi.slopeTo(op[j])==slope) {
+                    seglen = seglen + 1;
+                    if( pi.compareTo(op[j])>0 ) {
+                        StdOut.println("Backflow!");
+                        backflow=true;
                     }
+                    StdOut.println("segment continued "+pi+" "+op[j]+" : "+slope+" seglen:"+seglen);
+                } else {
+                    //if ( cocount >= 3 && compare(slope,0.0)>=0 ) {
+                    StdOut.println("segment break "+pi+" "+op[j]+" : "+slope);
+                    if ( seglen >= 4 && backflow==false ) {
+                            segmentsQ.enqueue(new LineSegment(pi, op[j - 1]));
+                            StdOut.println("added segment with slope : "+slope);
+                    }
+                    backflow=false;
                     start_segment = op[j];
                     slope = pi.slopeTo(op[j]);
-                    cocount = 1;
+                    if( pi.compareTo(op[j])>0 ) {
+                        StdOut.println("Backflow!");
+                        backflow=true;
+                    }
+                    seglen = 2;
                 }
 
             }
