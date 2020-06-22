@@ -5,13 +5,13 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.Merge;
 
-import java.lang.reflect.Array;
+//import java.lang.reflect.Array;
 import java.util.Arrays;
 
-import static java.lang.Double.compare;
+//import static java.lang.Double.compare;
 
 public class FastCollinearPoints {
-    static Queue<LineSegment> segmentsQ=new Queue();
+    private static Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
 
     public FastCollinearPoints(Point[] points)    // finds all line segments containing 4 points
     {
@@ -59,7 +59,7 @@ public class FastCollinearPoints {
             // StdOut.println("first slope ordered slope compare :"+pi+" "+op[0]+" : "+slope);
             boolean backflow=false;
             if( pi.compareTo(op[0])>0 ) {
-                StdOut.println("Backflow!");
+                //StdOut.println("Backflow!");
                 backflow=true;
             }
 
@@ -67,22 +67,22 @@ public class FastCollinearPoints {
                 if (pi.slopeTo(op[j])==slope) {
                     seglen = seglen + 1;
                     if( pi.compareTo(op[j])>0 ) {
-                        StdOut.println("Backflow!");
+                        //StdOut.println("Backflow!");
                         backflow=true;
                     }
-                    StdOut.println("segment continued "+pi+" "+op[j]+" : "+slope+" seglen:"+seglen);
+                    //StdOut.println("segment continued "+pi+" "+op[j]+" : "+slope+" seglen:"+seglen);
                 } else {
                     //if ( cocount >= 3 && compare(slope,0.0)>=0 ) {
-                    StdOut.println("segment break "+pi+" "+op[j]+" : "+slope);
+                    //StdOut.println("segment break "+pi+" "+op[j]+" : "+slope);
                     if ( seglen >= 4 && backflow==false ) {
                             segmentsQ.enqueue(new LineSegment(pi, op[j - 1]));
-                            StdOut.println("added segment with slope : "+slope);
+                            //StdOut.println("added segment with slope : "+slope);
                     }
                     backflow=false;
                     start_segment = op[j];
                     slope = pi.slopeTo(op[j]);
                     if( pi.compareTo(op[j])>0 ) {
-                        StdOut.println("Backflow!");
+                        //StdOut.println("Backflow!");
                         backflow=true;
                     }
                     seglen = 2;
