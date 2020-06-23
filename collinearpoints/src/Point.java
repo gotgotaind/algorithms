@@ -73,7 +73,7 @@ public class Point implements Comparable<Point> {
 
 
         // horizontal lines must return positive zero
-        if ( y == that.y ) { return 0.0; };
+        if ( y == that.y ) { return 0.0; }
 
         return (that.y-y)/(double)(that.x-x);
     }

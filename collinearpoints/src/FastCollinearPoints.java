@@ -11,7 +11,8 @@ import java.util.Arrays;
 //import static java.lang.Double.compare;
 
 public class FastCollinearPoints {
-    private final static Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
+    private final Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
+    private final static boolean debug=false;
 
     public FastCollinearPoints(Point[] points)    // finds all line segments containing 4 points
     {
@@ -33,6 +34,9 @@ public class FastCollinearPoints {
             }
         }
 
+        // If there is only one point, no need to go further
+        if ( points.length == 1 ) { return ; }
+
         //Arrays.sort(points, points[0].slopeOrder());
         //Merge.sort(points);
 
@@ -48,7 +52,7 @@ public class FastCollinearPoints {
                 }
             }
             Point pi = points[i];
-            // StdOut.println("Pivot  point : "+pi);
+            if ( debug ) { StdOut.println("Pivot  point : "+pi); }
             Merge.sort(op);
             Arrays.sort(op, pi.slopeOrder());
 
@@ -56,33 +60,40 @@ public class FastCollinearPoints {
             Point start_segment = op[0];
             double slope = pi.slopeTo(start_segment);
             int seglen = 2;
-            // StdOut.println("first slope ordered slope compare :"+pi+" "+op[0]+" : "+slope);
+            if ( debug ) { StdOut.println("first slope ordered slope compare :"+pi+" "+op[0]+" : "+slope); }
             boolean backflow=false;
             if( pi.compareTo(op[0])>0 ) {
-                //StdOut.println("Backflow!");
+                if ( debug ) { StdOut.println("Backflow!"); }
                 backflow=true;
             }
 
             for (int j = 1; j < points.length - 1; j++) {
                 if (pi.slopeTo(op[j])==slope) {
                     seglen = seglen + 1;
+                    if ( debug ) {  StdOut.println("segment continued "+pi+" "+op[j]+" : "+slope+" seglen:"+seglen); }
                     if( pi.compareTo(op[j])>0 ) {
-                        //StdOut.println("Backflow!");
+                        if ( debug ) {  StdOut.println("Backflow!"); }
                         backflow=true;
                     }
-                    //StdOut.println("segment continued "+pi+" "+op[j]+" : "+slope+" seglen:"+seglen);
+                    // if it's the last point of op and a segment was formed add it now.
+                    // instead of checking if the next point in op is in the same segment
+                    if ( ( j == ( points.length -2 ) ) && seglen >= 4 && backflow==false ) {
+                        segmentsQ.enqueue(new LineSegment(pi, op[j]));
+                        if ( debug ) {  StdOut.println("added segment with slope ( this segment ends at the last point of op ) : "+slope); }
+                    }
+
                 } else {
                     //if ( cocount >= 3 && compare(slope,0.0)>=0 ) {
-                    //StdOut.println("segment break "+pi+" "+op[j]+" : "+slope);
+                    if ( debug ) {  StdOut.println("segment break "+pi+" "+op[j]+" : "+slope); }
                     if ( seglen >= 4 && backflow==false ) {
                             segmentsQ.enqueue(new LineSegment(pi, op[j - 1]));
-                            //StdOut.println("added segment with slope : "+slope);
+                        if ( debug ) {  StdOut.println("added segment with slope : "+slope); }
                     }
                     backflow=false;
                     start_segment = op[j];
                     slope = pi.slopeTo(op[j]);
                     if( pi.compareTo(op[j])>0 ) {
-                        //StdOut.println("Backflow!");
+                        if ( debug ) { StdOut.println("Backflow!"); }
                         backflow=true;
                     }
                     seglen = 2;
