@@ -11,7 +11,7 @@ import java.util.Arrays;
 //import static java.lang.Double.compare;
 
 public class FastCollinearPoints {
-    private static Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
+    private final static Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
 
     public FastCollinearPoints(Point[] points)    // finds all line segments containing 4 points
     {

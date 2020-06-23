@@ -71,6 +71,10 @@ public class Point implements Comparable<Point> {
             }
         }
 
+
+        // horizontal lines must return positive zero
+        if ( y == that.y ) { return 0.0; };
+
         return (that.y-y)/(double)(that.x-x);
     }
 
@@ -180,6 +184,8 @@ public class Point implements Comparable<Point> {
         StdOut.println("a: "+a.toString()+" b: "+b.toString()+" slope: "+a.slopeTo(b));
         assert(a.slopeTo(b)==Double.POSITIVE_INFINITY);
 
+
+
         a=new Point(2,1);
         Comparator<Point> so=a.slopeOrder();
         b=new Point(3,2);
@@ -190,6 +196,12 @@ public class Point implements Comparable<Point> {
         StdOut.println("a.slopeTo(b) = "+a.slopeTo(b));
         StdOut.println("a.slopeTo(c) = "+a.slopeTo(c));
         StdOut.println("a.compareSlope(b,c) = "+so.compare(b,c));
+
+        a=new Point(485,211);
+        b=new Point(250,211);
+        double z=a.slopeTo(b);
+        StdOut.println("a: "+a.toString()+" b: "+b.toString()+" slope: "+a.slopeTo(b));
+        //assert(a.slopeTo(b)==Double.POSITIVE_INFINITY);
 
 
     }

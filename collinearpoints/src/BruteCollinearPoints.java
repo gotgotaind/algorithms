@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class BruteCollinearPoints {
-    private static Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
+    private final static Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
 
     public BruteCollinearPoints(Point[] points)    // finds all line segments containing 4 points
     {
