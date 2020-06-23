@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.Merge;
 
 public class BruteCollinearPoints {
     private final Queue<LineSegment> segmentsQ=new Queue<LineSegment>();
@@ -26,29 +27,31 @@ public class BruteCollinearPoints {
             }
         }
 
-        for(int i=0;i<points.length;i++) {
-            for(int j=0;j<points.length;j++) {
-                if ( j != i ) {
-                    for (int k = 0; k < points.length; k++) {
-                        if ( k!=i && k!=j ) {
-                            for (int l = 0; l < points.length; l++) {
-                                if ( l!=i && l!=k && l!=j ) {
+        Merge.sort(points);
+
+        for(int i=0;i<points.length-3;i++) {
+            for(int j=i+1;j<points.length-2;j++) {
+                //if ( j != i ) {
+                    for (int k = j+1; k < points.length-1; k++) {
+                        //if ( k!=i && k!=j ) {
+                            for (int l = k+1; l < points.length; l++) {
+                                //if ( l!=i && l!=k && l!=j ) {
                                     //StdOut.println(i+","+j+","+k+","+l);
                                     Point p = points[i];
                                     Point q = points[j];
                                     Point r = points[k];
                                     Point s = points[l];
-                                    if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
+                                    //if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
                                     if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(q) == p.slopeTo(s)) {
                                         segmentsQ.enqueue(new LineSegment(p, s));
                                     }
-                                    }
-                                }
+                                    //}
+                                //}
 
                             }
-                        }
+                        //}
                     }
-                }
+                //}
             }
         }
     }

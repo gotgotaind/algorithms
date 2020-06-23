@@ -38,7 +38,7 @@ public class FastCollinearPoints {
         if ( points.length == 1 ) { return ; }
 
         //Arrays.sort(points, points[0].slopeOrder());
-        //Merge.sort(points);
+        Merge.sort(points);
 
         for(int i=0;i<points.length;i++) {
             //    int i=0;
@@ -53,7 +53,7 @@ public class FastCollinearPoints {
             }
             Point pi = points[i];
             if ( debug ) { StdOut.println("Pivot  point : "+pi); }
-            Merge.sort(op);
+            //Merge.sort(op);
             Arrays.sort(op, pi.slopeOrder());
 
 
