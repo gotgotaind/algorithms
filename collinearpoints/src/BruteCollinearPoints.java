@@ -27,7 +27,11 @@ public class BruteCollinearPoints {
             }
         }
 
-        Merge.sort(points);
+        Point[] op = new Point[points.length];
+        for (int j = 0; j < points.length; j++) {
+            op[j] = points[j];
+        }
+        Merge.sort(op);
 
         for(int i=0;i<points.length-3;i++) {
             for(int j=i+1;j<points.length-2;j++) {
@@ -37,10 +41,10 @@ public class BruteCollinearPoints {
                             for (int l = k+1; l < points.length; l++) {
                                 //if ( l!=i && l!=k && l!=j ) {
                                     //StdOut.println(i+","+j+","+k+","+l);
-                                    Point p = points[i];
-                                    Point q = points[j];
-                                    Point r = points[k];
-                                    Point s = points[l];
+                                    Point p = op[i];
+                                    Point q = op[j];
+                                    Point r = op[k];
+                                    Point s = op[l];
                                     //if( s.compareTo(r) > 0 && r.compareTo(q) > 0 && q.compareTo(p) > 0 ) {
                                     if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(q) == p.slopeTo(s)) {
                                         segmentsQ.enqueue(new LineSegment(p, s));

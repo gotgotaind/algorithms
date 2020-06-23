@@ -37,21 +37,24 @@ public class FastCollinearPoints {
         // If there is only one point, no need to go further
         if ( points.length == 1 ) { return ; }
 
-        //Arrays.sort(points, points[0].slopeOrder());
-        Merge.sort(points);
+        Point[] sorted_points = new Point[points.length];
+        for (int j = 0; j < points.length; j++) {
+                sorted_points[j] = points[j];
+        }
+        Merge.sort(sorted_points);
 
-        for(int i=0;i<points.length;i++) {
+        for(int i=0;i<sorted_points.length;i++) {
             //    int i=0;
 
-            Point[] op = new Point[points.length - 1];
+            Point[] op = new Point[sorted_points.length - 1];
             int k = 0;
-            for (int j = 0; j < points.length; j++) {
+            for (int j = 0; j < sorted_points.length; j++) {
                 if (j != i) {
-                    op[k] = points[j];
+                    op[k] = sorted_points[j];
                     k = k + 1;
                 }
             }
-            Point pi = points[i];
+            Point pi = sorted_points[i];
             if ( debug ) { StdOut.println("Pivot  point : "+pi); }
             //Merge.sort(op);
             Arrays.sort(op, pi.slopeOrder());
@@ -67,7 +70,7 @@ public class FastCollinearPoints {
                 backflow=true;
             }
 
-            for (int j = 1; j < points.length - 1; j++) {
+            for (int j = 1; j < sorted_points.length - 1; j++) {
                 if (pi.slopeTo(op[j])==slope) {
                     seglen = seglen + 1;
                     if ( debug ) {  StdOut.println("segment continued "+pi+" "+op[j]+" : "+slope+" seglen:"+seglen); }
@@ -77,7 +80,7 @@ public class FastCollinearPoints {
                     }
                     // if it's the last point of op and a segment was formed add it now.
                     // instead of checking if the next point in op is in the same segment
-                    if ( ( j == ( points.length -2 ) ) && seglen >= 4 && backflow==false ) {
+                    if ( ( j == ( sorted_points.length -2 ) ) && seglen >= 4 && backflow==false ) {
                         segmentsQ.enqueue(new LineSegment(pi, op[j]));
                         if ( debug ) {  StdOut.println("added segment with slope ( this segment ends at the last point of op ) : "+slope); }
                     }
