@@ -1,4 +1,9 @@
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
+
+
+import java.util.Iterator;
 
 public class Board {
 
@@ -99,6 +104,8 @@ public class Board {
     // does this board equal y?
     public boolean equals(Object y) {
 
+        // must test that size are equals !
+        
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
                 if ( tiles[i][j]!=((Board) y).tiles[i][j] ) {
@@ -110,12 +117,103 @@ public class Board {
     }
 
     // all neighboring boards
-    public Iterable<Board> neighbors()
+    public Iterable<Board> neighbors() {
+        int i0=0,j0=0;
+        Stack<Board> s=new Stack<Board>();
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                if ( tiles[i][j]==0 ) {
+                    i0=i;
+                    j0=j;
+                }
+            }
+        }
+
+        // move right?
+        if ( i0 + 1 < n ) {
+            Board b=new Board(tiles);
+            int v=b.tiles[i0+1][j0];
+            b.tiles[i0+1][j0]=0;
+            b.tiles[i0][j0]=v;
+            s.push(b);
+        }
+
+        // move left?
+        if ( i0 - 1 > 0 ) {
+            Board b=new Board(tiles);
+            int v=b.tiles[i0-1][j0];
+            b.tiles[i0-1][j0]=0;
+            b.tiles[i0][j0]=v;
+            s.push(b);
+        }
+
+        // move down?
+        if ( j0 + 1 < n ) {
+            Board b=new Board(tiles);
+            int v=b.tiles[i0][j0+1];
+            b.tiles[i0][j0+1]=0;
+            b.tiles[i0][j0]=v;
+            s.push(b);
+        }
+
+        // move up?
+        if ( j0 - 1 > 0 ) {
+            Board b=new Board(tiles);
+            int v=b.tiles[i0][j0-1];
+            b.tiles[i0][j0-1]=0;
+            b.tiles[i0][j0]=v;
+            s.push(b);
+        }
+
+
+        return s;
+    }
+
+
 
     // a board that is obtained by exchanging any pair of tiles
-    public Board twin()
+    public Board twin() {
+        int i0=0;
+        int j0=0;
+        int i1=0;
+        int j1=0;
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                if ( tiles[i][j]!=0 ) {
+                    i0=i;
+                    j0=j;
+                    break;
+                }
+            }
+            if ( tiles[i][j0]!=0 ) {
+                break;
+            }
+        }
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                if ( tiles[i][j]!=0 && i!=i0 && j!=j0) {
+                    i1=i;
+                    j1=j;
+                    break;
+                }
+            }
+            if ( tiles[i][j1]!=0 && i!=i0 && j1!=j0) {
+                break;
+            }
+        }
+
+        Board b=new Board(tiles);
+        int v=b.tiles[i0][j0];
+        b.tiles[i0][j0]=b.tiles[i1][j1];
+        b.tiles[i1][j1]=v;
+        return b;
+    }
 
     // unit testing (not graded)
-    public static void main(String[] args)
+    //public static void main(String[] args)
+
 
 }
