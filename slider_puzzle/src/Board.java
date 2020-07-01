@@ -21,20 +21,26 @@ public class Board {
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         this.tiles=tiles;
-        n= (int) Math.sqrt(tiles.length);
+        n= tiles.length;
         goal=new int[n][n];
-        goalij=new tile[n];
+        goalij=new tile[n*n];
+
 
         int k=1;
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                goal[i][j]=k;
-                goalij[k].i = i;
-                goalij[k].j = j;
-                if ( i==(n-1) && j==(n-2) ) {
+
+                if ( i==(n-1) && j==(n-1) ) {
                     goal[i][j]=0;
+                    goalij[0]=new tile();
                     goalij[0].i=i;
                     goalij[0].j=j;
+                }
+                else {
+                    goal[i][j]=k;
+                    goalij[k]=new tile();
+                    goalij[k].i = i;
+                    goalij[k].j = j;
                 }
                 k=k+1;
             }
@@ -54,6 +60,7 @@ public class Board {
             for(int j=0;j<n;j++) {
                 out=out+"\t"+tiles[i][j];
             }
+            out=out+"\n";
         }
         return out;
     }
@@ -101,6 +108,16 @@ public class Board {
         return true;
     }
 
+    public Board goal() {
+        Board b=new Board(tiles);
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                b.tiles[i][j]=goal[i][j];
+            }
+        }
+        return b;
+    }
+
     // does this board equal y?
     public boolean equals(Object y) {
 
@@ -132,38 +149,38 @@ public class Board {
 
         // move right?
         if ( i0 + 1 < n ) {
-            Board b=new Board(tiles);
-            int v=b.tiles[i0+1][j0];
-            b.tiles[i0+1][j0]=0;
-            b.tiles[i0][j0]=v;
-            s.push(b);
+            Board br=new Board(tiles);
+            int v=br.tiles[i0+1][j0];
+            br.tiles[i0+1][j0]=0;
+            br.tiles[i0][j0]=v;
+            s.push(br);
         }
 
         // move left?
         if ( i0 - 1 > 0 ) {
-            Board b=new Board(tiles);
-            int v=b.tiles[i0-1][j0];
-            b.tiles[i0-1][j0]=0;
-            b.tiles[i0][j0]=v;
-            s.push(b);
+            Board bl=new Board(tiles);
+            int v=bl.tiles[i0-1][j0];
+            bl.tiles[i0-1][j0]=0;
+            bl.tiles[i0][j0]=v;
+            s.push(bl);
         }
 
         // move down?
         if ( j0 + 1 < n ) {
-            Board b=new Board(tiles);
-            int v=b.tiles[i0][j0+1];
-            b.tiles[i0][j0+1]=0;
-            b.tiles[i0][j0]=v;
-            s.push(b);
+            Board bd=new Board(tiles);
+            int v=bd.tiles[i0][j0+1];
+            bd.tiles[i0][j0+1]=0;
+            bd.tiles[i0][j0]=v;
+            s.push(bd);
         }
 
         // move up?
         if ( j0 - 1 > 0 ) {
-            Board b=new Board(tiles);
-            int v=b.tiles[i0][j0-1];
-            b.tiles[i0][j0-1]=0;
-            b.tiles[i0][j0]=v;
-            s.push(b);
+            Board bu=new Board(tiles);
+            int v=bu.tiles[i0][j0-1];
+            bu.tiles[i0][j0-1]=0;
+            bu.tiles[i0][j0]=v;
+            s.push(bu);
         }
 
 
@@ -213,7 +230,31 @@ public class Board {
     }
 
     // unit testing (not graded)
-    //public static void main(String[] args)
+    public static void main(String[] args) {
+        int n=3;
+        int[][] tiles=new int[n][n+1];
+
+        int k=0;
+        for(int i=0;i<n;i++) {
+            for (int j = 0; j < n; j++) {
+                tiles[i][j] = k;
+                k=k+1;
+            }
+        }
+
+        Board b=new Board(tiles);
+        StdOut.println(b.toString());
+        b=b.goal();
+        StdOut.println(b.toString());
+
+        int neib=0;
+        for ( Board bb : b.neighbors() ) {
+            StdOut.println("Neigbor "+neib);
+            StdOut.println(b.toString());
+            neib++;
+        }
+
+    }
 
 
 }
