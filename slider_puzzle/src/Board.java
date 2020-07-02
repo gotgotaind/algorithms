@@ -20,8 +20,15 @@ public class Board {
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
-        this.tiles=tiles;
+
+
         n= tiles.length;
+        this.tiles=new int[n][n];
+        for(int i=0;i<n;i++) {
+            for (int j = 0; j < n; j++) {
+                this.tiles[i][j] = tiles[i][j];
+            }
+        }
         goal=new int[n][n];
         goalij=new tile[n*n];
 
@@ -242,18 +249,22 @@ public class Board {
             }
         }
 
+        StdOut.println("initial board :");
         Board b=new Board(tiles);
         StdOut.println(b.toString());
+        StdOut.println("Goal board :");
         b=b.goal();
         StdOut.println(b.toString());
 
+        StdOut.println("Neighbors :");
         int neib=0;
         for ( Board bb : b.neighbors() ) {
             StdOut.println("Neigbor "+neib);
-            StdOut.println(b.toString());
+            StdOut.println(bb.toString());
             neib++;
         }
-
+        StdOut.println("Twin :");
+        StdOut.println(b.twin());
     }
 
 
