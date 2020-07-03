@@ -11,10 +11,15 @@ public class Board {
     private final int n;
     private final int[][] goal;
     private final tile[] goalij;
+    private final tile[] tileij;
 
     private class tile {
         private int i;
         private int j;
+        tile(int i,int j) {
+            this.i=i;
+            this.j=j;
+        }
 
     }
     // create a board from an n-by-n array of tiles,
@@ -31,23 +36,24 @@ public class Board {
         }
         goal=new int[n][n];
         goalij=new tile[n*n];
-
+        tileij=new tile[n*n];
 
         int k=1;
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
 
+                tileij[tiles[i][j]]=new tile(i,j);
+                if( tiles[i][j]==6 ) {
+                    StdOut.println("tiles[i][j]=6,i="+i+",j="+j);
+                }
+
                 if ( i==(n-1) && j==(n-1) ) {
                     goal[i][j]=0;
-                    goalij[0]=new tile();
-                    goalij[0].i=i;
-                    goalij[0].j=j;
+                    goalij[0]=new tile(i,j);
                 }
                 else {
                     goal[i][j]=k;
-                    goalij[k]=new tile();
-                    goalij[k].i = i;
-                    goalij[k].j = j;
+                    goalij[k]=new tile(i,j);
                 }
                 k=k+1;
             }
@@ -94,11 +100,9 @@ public class Board {
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
         int distance=0;
-        for(int i=0;i<n;i++) {
-            for(int j=0;j<n;j++) {
-                distance=distance+Math.abs(i-goalij[goal[i][j]].i)+Math.abs(j-goalij[goal[i][j]].j);
-            }
-
+        for(int k=1;k<n*n;k++) {
+                StdOut.println("k :"+k+",tileij[k].i :"+tileij[k].i);
+                distance=distance+Math.abs(tileij[k].i-goalij[k].i)+Math.abs(tileij[k].j-goalij[k].j);
         }
         return distance;
     }
@@ -261,6 +265,10 @@ public class Board {
         for ( Board bb : b.neighbors() ) {
             StdOut.println("Neigbor "+neib);
             StdOut.println(bb.toString());
+            StdOut.println("manatan :"+bb.manhattan());
+            StdOut.println("hamming :"+bb.hamming());
+            StdOut.println("equal to b :"+bb.equals(b));
+            StdOut.println("equal to itself :"+bb.equals(bb));
             neib++;
         }
         StdOut.println("Twin :");
