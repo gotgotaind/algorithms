@@ -29,8 +29,11 @@ public class Board {
 
         n= tiles.length;
         this.tiles=new int[n][n];
+
+        StdOut.println("In tiles initialization loop");
         for(int i=0;i<n;i++) {
             for (int j = 0; j < n; j++) {
+                StdOut.println("tiles[i][j]=v,i="+i+",j="+j+",v="+tiles[i][j]+",this.v="+this.tiles[i][j]);
                 this.tiles[i][j] = tiles[i][j];
             }
         }
@@ -43,7 +46,8 @@ public class Board {
             for(int j=0;j<n;j++) {
 
                 tileij[tiles[i][j]]=new tile(i,j);
-                if( tiles[i][j]==6 ) {
+                if( this.tiles[i][j]==6 ) {
+                    StdOut.println("In tileij and goal loop");
                     StdOut.println("tiles[i][j]=6,i="+i+",j="+j);
                 }
 
@@ -120,12 +124,14 @@ public class Board {
     }
 
     public Board goal() {
-        Board b=new Board(tiles);
+        int[][] gtiles=new int[n][n];
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                b.tiles[i][j]=goal[i][j];
+                gtiles[i][j]=goal[i][j];
             }
         }
+        Board b=new Board(gtiles);
+
         return b;
     }
 
@@ -147,10 +153,12 @@ public class Board {
     // all neighboring boards
     public Iterable<Board> neighbors() {
         int i0=0,j0=0;
+        int[][] ntiles = new int[n][n];
         Stack<Board> s=new Stack<Board>();
 
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
+                ntiles[i][j]=tiles[i][j];
                 if ( tiles[i][j]==0 ) {
                     i0=i;
                     j0=j;
@@ -160,37 +168,59 @@ public class Board {
 
         // move right?
         if ( i0 + 1 < n ) {
-            Board br=new Board(tiles);
-            int v=br.tiles[i0+1][j0];
-            br.tiles[i0+1][j0]=0;
-            br.tiles[i0][j0]=v;
+
+            int v=ntiles[i0+1][j0];
+            ntiles[i0+1][j0]=0;
+            ntiles[i0][j0]=v;
+            Board br=new Board(ntiles);
             s.push(br);
+        }
+
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                ntiles[i][j]=tiles[i][j];
+            }
         }
 
         // move left?
         if ( i0 - 1 > 0 ) {
-            Board bl=new Board(tiles);
-            int v=bl.tiles[i0-1][j0];
-            bl.tiles[i0-1][j0]=0;
-            bl.tiles[i0][j0]=v;
+            int v=ntiles[i0-1][j0];
+            ntiles[i0-1][j0]=0;
+            ntiles[i0][j0]=v;
+            Board bl=new Board(ntiles);
             s.push(bl);
+        }
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                ntiles[i][j]=tiles[i][j];
+            }
         }
 
         // move down?
         if ( j0 + 1 < n ) {
-            Board bd=new Board(tiles);
-            int v=bd.tiles[i0][j0+1];
-            bd.tiles[i0][j0+1]=0;
-            bd.tiles[i0][j0]=v;
+
+            int v=ntiles[i0][j0+1];
+            ntiles[i0][j0+1]=0;
+            ntiles[i0][j0]=v;
+            Board bd=new Board(ntiles);
             s.push(bd);
+        }
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                ntiles[i][j]=tiles[i][j];
+            }
         }
 
         // move up?
         if ( j0 - 1 > 0 ) {
-            Board bu=new Board(tiles);
-            int v=bu.tiles[i0][j0-1];
-            bu.tiles[i0][j0-1]=0;
-            bu.tiles[i0][j0]=v;
+
+            int v=ntiles[i0][j0-1];
+            ntiles[i0][j0-1]=0;
+            ntiles[i0][j0]=v;
+            Board bu=new Board(ntiles);
             s.push(bu);
         }
 
