@@ -30,10 +30,10 @@ public class Board {
         n= tiles.length;
         this.tiles=new int[n][n];
 
-        StdOut.println("In tiles initialization loop");
+        //StdOut.println("In tiles initialization loop");
         for(int i=0;i<n;i++) {
             for (int j = 0; j < n; j++) {
-                StdOut.println("tiles[i][j]=v,i="+i+",j="+j+",v="+tiles[i][j]+",this.v="+this.tiles[i][j]);
+                // StdOut.println("tiles[i][j]=v,i="+i+",j="+j+",v="+tiles[i][j]+",this.v="+this.tiles[i][j]);
                 this.tiles[i][j] = tiles[i][j];
             }
         }
@@ -46,10 +46,10 @@ public class Board {
             for(int j=0;j<n;j++) {
 
                 tileij[tiles[i][j]]=new tile(i,j);
-                if( this.tiles[i][j]==6 ) {
+                /* if( this.tiles[i][j]==6 ) {
                     StdOut.println("In tileij and goal loop");
                     StdOut.println("tiles[i][j]=6,i="+i+",j="+j);
-                }
+                }*/
 
                 if ( i==(n-1) && j==(n-1) ) {
                     goal[i][j]=0;
@@ -105,7 +105,7 @@ public class Board {
     public int manhattan() {
         int distance=0;
         for(int k=1;k<n*n;k++) {
-                StdOut.println("k :"+k+",tileij[k].i :"+tileij[k].i);
+                //StdOut.println("k :"+k+",tileij[k].i :"+tileij[k].i);
                 distance=distance+Math.abs(tileij[k].i-goalij[k].i)+Math.abs(tileij[k].j-goalij[k].j);
         }
         return distance;
@@ -237,36 +237,43 @@ public class Board {
         int i1=0;
         int j1=0;
 
+        int[][] ttiles=new int[n][n];
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if ( tiles[i][j]!=0 ) {
+                ttiles[i][j]=tiles[i][j];
+            }
+        }
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                if ( ttiles[i][j]!=0 ) {
                     i0=i;
                     j0=j;
                     break;
                 }
             }
-            if ( tiles[i][j0]!=0 ) {
+            if ( ttiles[i][j0]!=0 ) {
                 break;
             }
         }
 
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if ( tiles[i][j]!=0 && i!=i0 && j!=j0) {
+                if ( ttiles[i][j]!=0 && i!=i0 && j!=j0) {
                     i1=i;
                     j1=j;
                     break;
                 }
             }
-            if ( tiles[i][j1]!=0 && i!=i0 && j1!=j0) {
+            if ( ttiles[i][j1]!=0 && i!=i0 && j1!=j0) {
                 break;
             }
         }
 
-        Board b=new Board(tiles);
-        int v=b.tiles[i0][j0];
-        b.tiles[i0][j0]=b.tiles[i1][j1];
-        b.tiles[i1][j1]=v;
+        int v=ttiles[i0][j0];
+        ttiles[i0][j0]=ttiles[i1][j1];
+        ttiles[i1][j1]=v;
+        Board b=new Board(ttiles);
         return b;
     }
 
