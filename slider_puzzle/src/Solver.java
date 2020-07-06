@@ -8,9 +8,9 @@ import java.util.Comparator;
 public class Solver {
     private boolean isSolvable=false;
     private int moves=-1;
-    Stack<Board> s=new Stack<Board>();
+    private Stack<Board> s=new Stack<Board>();
 
-    class SearchNode implements Comparable<SearchNode>{
+    private class SearchNode implements Comparable<SearchNode>{
         Board b;
         int moves;
         SearchNode previous;
@@ -33,7 +33,7 @@ public class Solver {
 
     }
 
-    MinPQ<SearchNode> pq=new MinPQ<SearchNode>();
+    private MinPQ<SearchNode> pq=new MinPQ<SearchNode>();
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         SearchNode sn0=new SearchNode();
