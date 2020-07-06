@@ -70,8 +70,8 @@ public class Board {
 
     // string representation of this board
     public String toString() {
-        String out=new String();
-        out=""+n+"\n";
+        String out=n+"\n";
+        //out=""+n+"\n";
         for(int i=0;i<n;i++) {
             //cout=out+"\t";
             for(int j=0;j<n;j++) {
@@ -92,7 +92,7 @@ public class Board {
         int distance=0;
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if( tiles[i][j]!=goal[i][j] ) {
+                if( tiles[i][j]!=goal[i][j] && tiles[i][j]!=0 ) {
                     distance=distance+1;
                 }
             }
@@ -184,7 +184,7 @@ public class Board {
         }
 
         // move left?
-        if ( i0 - 1 > 0 ) {
+        if ( i0 - 1 >= 0 ) {
             int v=ntiles[i0-1][j0];
             ntiles[i0-1][j0]=0;
             ntiles[i0][j0]=v;
@@ -215,7 +215,7 @@ public class Board {
         }
 
         // move up?
-        if ( j0 - 1 > 0 ) {
+        if ( j0 - 1 >= 0 ) {
 
             int v=ntiles[i0][j0-1];
             ntiles[i0][j0-1]=0;
