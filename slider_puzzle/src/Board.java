@@ -9,19 +9,7 @@ public class Board {
 
     private final int[][] tiles;
     private final int n;
-    private final int[][] goal;
-    private final tile[] goalij;
-    private final tile[] tileij;
 
-    private class tile {
-        private int i;
-        private int j;
-        tile(int i,int j) {
-            this.i=i;
-            this.j=j;
-        }
-
-    }
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
@@ -37,49 +25,25 @@ public class Board {
                 this.tiles[i][j] = tiles[i][j];
             }
         }
-        goal=new int[n][n];
-        goalij=new tile[n*n];
-        tileij=new tile[n*n];
-
-        int k=1;
-        for(int i=0;i<n;i++) {
-            for(int j=0;j<n;j++) {
-
-                tileij[tiles[i][j]]=new tile(i,j);
-                /* if( this.tiles[i][j]==6 ) {
-                    StdOut.println("In tileij and goal loop");
-                    StdOut.println("tiles[i][j]=6,i="+i+",j="+j);
-                }*/
-
-                if ( i==(n-1) && j==(n-1) ) {
-                    goal[i][j]=0;
-                    goalij[0]=new tile(i,j);
-                }
-                else {
-                    goal[i][j]=k;
-                    goalij[k]=new tile(i,j);
-                }
-                k=k+1;
-            }
-
-        }
-
-
-
     }
 
     // string representation of this board
     public String toString() {
-        String out=n+"\n";
+        StringBuilder out
+                = new StringBuilder();
+
+        //str.append("GFG");
+        //String out=n+"\n";
         //out=""+n+"\n";
         for(int i=0;i<n;i++) {
             //cout=out+"\t";
             for(int j=0;j<n;j++) {
-                out=out+"\t"+tiles[i][j];
+                out=out.append("\t");
+                out=out.append(tiles[i][j]);
             }
-            out=out+"\n";
+            out=out.append("\n");
         }
-        return out;
+        return out.toString();
     }
 
     // board dimension n
@@ -90,11 +54,13 @@ public class Board {
     // number of tiles out of place
     public int hamming() {
         int distance=0;
+        int k=1;
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if( tiles[i][j]!=goal[i][j] && tiles[i][j]!=0 ) {
+                if( tiles[i][j]!=k && tiles[i][j]!=0 ) {
                     distance=distance+1;
                 }
+                k=k+1;
             }
 
         }
@@ -104,36 +70,40 @@ public class Board {
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
         int distance=0;
-        for(int k=1;k<n*n;k++) {
-                //StdOut.println("k :"+k+",tileij[k].i :"+tileij[k].i);
-                distance=distance+Math.abs(tileij[k].i-goalij[k].i)+Math.abs(tileij[k].j-goalij[k].j);
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                int k=1;
+                for(int l=0;l<n;l++) {
+                    for (int m = 0; m < n; m++) {
+                        if (tiles[i][j] == k && tiles[i][j] != 0) {
+                            distance = distance + Math.abs(l-i)+Math.abs(m-j);
+                        }
+                        k=k+1;
+                        if ( k == n*n ) { k=0; }
+                    }
+                }
+            }
+
         }
         return distance;
     }
 
     // is this board the goal board?
     public boolean isGoal() {
+        int k=1;
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if ( tiles[i][j]!=goal[i][j] ) {
+                if ( tiles[i][j]!=k ) {
                     return false;
                 }
+                k=k+1;
+                if ( k== n*n ) { k=0; }
             }
         }
         return true;
     }
 
-    private Board goal() {
-        int[][] gtiles=new int[n][n];
-        for(int i=0;i<n;i++) {
-            for(int j=0;j<n;j++) {
-                gtiles[i][j]=goal[i][j];
-            }
-        }
-        Board b=new Board(gtiles);
-
-        return b;
-    }
 
     // does this board equal y?
     public boolean equals(Object y) {
@@ -287,12 +257,21 @@ public class Board {
     // unit testing (not graded)
     public static void main(String[] args) {
         int n=3;
-        int[][] tiles=new int[n][n+1];
+        int[][] tiles=new int[n][n];
+        int[][] goal=new int[n][n];
 
         int k=0;
         for(int i=0;i<n;i++) {
             for (int j = 0; j < n; j++) {
                 tiles[i][j] = k;
+                if ( k==n*n-1 ) {
+                    goal[i][j]=0;
+
+                }
+                else
+                {
+                    goal[i][j]=k+1;
+                }
                 k=k+1;
             }
         }
@@ -301,7 +280,7 @@ public class Board {
         Board b=new Board(tiles);
         StdOut.println(b.toString());
         StdOut.println("Goal board :");
-        b=b.goal();
+        b=new Board(goal);
         StdOut.println(b.toString());
 
         StdOut.println("Neighbors :");

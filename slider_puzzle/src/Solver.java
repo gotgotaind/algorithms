@@ -33,13 +33,15 @@ public class Solver {
 
     }
 
-    private MinPQ<SearchNode> pq=new MinPQ<SearchNode>();
+
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         SearchNode sn0=new SearchNode();
         sn0.b=initial;
         sn0.moves=0;
         sn0.previous=null;
+
+        MinPQ<SearchNode> pq=new MinPQ<SearchNode>();
 
         // StdOut.println("Initial board :"+sn0.b.toString());
 
