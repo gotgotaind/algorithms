@@ -216,33 +216,35 @@ public class Board {
 
         int[][] ttiles=new int[n][n];
         for(int i=0;i<n;i++) {
-            for(int j=0;j<n;j++) {
-                ttiles[i][j]=tiles[i][j];
+            for (int j = 0; j < n; j++) {
+                ttiles[i][j] = tiles[i][j];
             }
         }
-
+        // find the first non zero tile
+        // true we could use this label thing to break out of the double loop using only one break
+        // not sure what would be the most readable
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if ( ttiles[i][j]!=0 ) {
+                if ( tiles[i][j]!=0 ) {
                     i0=i;
                     j0=j;
                     break;
                 }
             }
-            if ( ttiles[i][j0]!=0 ) {
+            if ( tiles[i][j0]!=0 ) {
                 break;
             }
         }
 
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
-                if ( ttiles[i][j]!=0 && i!=i0 && j!=j0) {
+                if ( tiles[i][j]!=0 && ! (i==i0 && j==j0) ) {
                     i1=i;
                     j1=j;
                     break;
                 }
             }
-            if ( ttiles[i][j1]!=0 && i!=i0 && j1!=j0) {
+            if ( tiles[i][j1]!=0 && ! (i==i0 && j1==j0) ) {
                 break;
             }
         }
