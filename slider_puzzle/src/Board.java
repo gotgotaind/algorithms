@@ -139,6 +139,13 @@ public class Board {
     public boolean equals(Object y) {
 
         // must test that size are equals !
+        if (y == this) return true;
+        if (y == null) return false;
+        if (y.getClass() != this.getClass()) return false;
+        Board by=(Board) y;
+        if( by.dimension() != this.dimension() ) {
+            return false;
+        }
         
         for(int i=0;i<n;i++) {
             for(int j=0;j<n;j++) {
