@@ -33,7 +33,7 @@ public class Board {
                 = new StringBuilder();
 
         //str.append("GFG");
-        //String out=n+"\n";
+        out=out.append(n).append("\n");
         //out=""+n+"\n";
         for(int i=0;i<n;i++) {
             //cout=out+"\t";

@@ -36,31 +36,54 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
+
+        if ( initial == null ) {
+            throw new IllegalArgumentException("initial board is null");
+        }
+
         SearchNode sn0=new SearchNode();
         sn0.b=initial;
         sn0.moves=0;
         sn0.previous=null;
+        MinPQ<SearchNode> pq0=new MinPQ<SearchNode>();
+        pq0.insert(sn0);
 
-        MinPQ<SearchNode> pq=new MinPQ<SearchNode>();
-
+        SearchNode sn1=new SearchNode();
+        sn1.b=initial.twin();
+        sn1.moves=0;
+        sn1.previous=null;
+        MinPQ<SearchNode> pq1=new MinPQ<SearchNode>();
+        pq1.insert(sn1);
         // StdOut.println("Initial board :"+sn0.b.toString());
 
-        pq.insert(sn0);
+
 
         SearchNode end=null;
 
-        while ( ! pq.isEmpty() ) {
-            SearchNode sn=pq.delMin();
-            if( sn.b.isGoal() ) {
-                end=sn;
+        while ( true ) {
+            sn0=pq0.delMin();
+            sn1=pq1.delMin();
+            if( sn0.b.isGoal() ) {
+                end=sn0;
                 break;
             }
-            for ( Board bb : sn.b.neighbors() ) {
-                SearchNode sn1=new SearchNode();
-                sn1.b=bb;
-                sn1.moves=sn.moves+1;
-                sn1.previous=sn;
-                pq.insert(sn1);
+            if( sn1.b.isGoal() ) {
+                end=null;
+                break;
+            }
+            for ( Board bb : sn0.b.neighbors() ) {
+                SearchNode sn=new SearchNode();
+                sn.b=bb;
+                sn.moves=sn0.moves+1;
+                sn.previous=sn0;
+                pq0.insert(sn);
+            }
+            for ( Board bb : sn1.b.neighbors() ) {
+                SearchNode sn=new SearchNode();
+                sn.b=bb;
+                sn.moves=sn1.moves+1;
+                sn.previous=sn1;
+                pq1.insert(sn);
             }
 
         }
