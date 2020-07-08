@@ -72,6 +72,7 @@ public class Solver {
                 break;
             }
             for ( Board bb : sn0.b.neighbors() ) {
+                if ( sn0.previous!=null && bb.equals(sn0.previous.b )) { continue; }
                 SearchNode sn=new SearchNode();
                 sn.b=bb;
                 sn.moves=sn0.moves+1;
@@ -79,6 +80,7 @@ public class Solver {
                 pq0.insert(sn);
             }
             for ( Board bb : sn1.b.neighbors() ) {
+                if ( sn1.previous!=null && bb.equals(sn1.previous.b )) { continue; }
                 SearchNode sn=new SearchNode();
                 sn.b=bb;
                 sn.moves=sn1.moves+1;
