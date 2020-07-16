@@ -14,10 +14,11 @@ public class Solver {
         Board b;
         int moves;
         SearchNode previous;
+        int manata;
 
         public int compareTo(SearchNode b){
-            int pa=this.moves+this.b.manhattan();
-            int pb=b.moves+b.b.manhattan();
+            int pa=this.moves+this.manata;
+            int pb=b.moves+b.manata;
             if( pa==pb) {
                 return 0;
             }
@@ -45,6 +46,7 @@ public class Solver {
         sn0.b=initial;
         sn0.moves=0;
         sn0.previous=null;
+        sn0.manata=sn0.b.manhattan();
         MinPQ<SearchNode> pq0=new MinPQ<SearchNode>();
         pq0.insert(sn0);
 
@@ -52,6 +54,7 @@ public class Solver {
         sn1.b=initial.twin();
         sn1.moves=0;
         sn1.previous=null;
+        sn1.manata=sn1.b.manhattan();
         MinPQ<SearchNode> pq1=new MinPQ<SearchNode>();
         pq1.insert(sn1);
         // StdOut.println("Initial board :"+sn0.b.toString());
@@ -77,6 +80,7 @@ public class Solver {
                 sn.b=bb;
                 sn.moves=sn0.moves+1;
                 sn.previous=sn0;
+                sn.manata=sn.b.manhattan();
                 pq0.insert(sn);
             }
             for ( Board bb : sn1.b.neighbors() ) {
@@ -85,6 +89,7 @@ public class Solver {
                 sn.b=bb;
                 sn.moves=sn1.moves+1;
                 sn.previous=sn1;
+                sn.manata=sn.b.manhattan();
                 pq1.insert(sn);
             }
 
