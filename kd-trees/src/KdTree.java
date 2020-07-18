@@ -1,16 +1,30 @@
 import edu.princeton.cs.algs4.*;
 
-public class PointSET {
-    private SET<Point2D> s;
+public class KdTree {
+    private Node root;
+    private int size;
+
+    class Node {
+        Point2D p;
+        Node ld;
+        Node ru;
+        boolean lr;
+        boolean ud;
+    }
 
     // construct an empty set of points
-    public PointSET() {
-        s = new SET<Point2D>();
+    public KdTree() {
+        root=new Node();
+        root.p=null;
+        root.ld=null;
+        root.ru=null;
+        root.lr=true;
+        root.ud=false;
     }
 
     // is the set empty?
     public boolean isEmpty() {
-        if (s.isEmpty()) {
+        if (root.p == null) {
             return true;
         } else {
             return false;
@@ -19,11 +33,11 @@ public class PointSET {
 
     // number of points in the set
     public               int size() {
-        return s.size();
+        return size;
     }
 
     // add the point to the set (if it is not already in the set)
-    public              void insert(Point2D p) {
+    public void insert(Point2D p) {
         if( ! s.contains(p) ) {
             s.add(p);
         }
