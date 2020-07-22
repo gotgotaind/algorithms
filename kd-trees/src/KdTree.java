@@ -2,24 +2,25 @@ import edu.princeton.cs.algs4.*;
 
 public class KdTree {
     private Node root;
-    private int size;
 
     class Node {
         Point2D p;
         Node ld;
         Node ru;
-        boolean lr;
-        boolean ud;
+        int N; // number of nodes in this subtree
+        boolean lr; // if true left/right comparison, else up/down
+        Node(Point2D p,boolean lr,int N) {
+            this.p=p;
+            this.N=N;
+            this.lr=lr;
+        }
     }
 
     // construct an empty set of points
     public KdTree() {
-        root=new Node();
-        root.p=null;
+        root=new Node(null,true,0);
         root.ld=null;
         root.ru=null;
-        root.lr=true;
-        root.ud=false;
     }
 
     // is the set empty?
@@ -31,15 +32,37 @@ public class KdTree {
         }
     }
 
-    // number of points in the set
-    public               int size() {
-        return size;
+    private int size(Node x)
+    {
+        if (x == null) return 0;
+        else return x.N;
+    }
+
+    private int size()
+    {
+        if (root == null) return 0;
+        else return root.N;
     }
 
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
-        if( ! s.contains(p) ) {
-            s.add(p);
+        // if kdtree is empty, just insert the point as the root
+        if ( root.p == null ) {
+            root.p = p;
+            root.N=1;
+            return;
+        }
+
+        // if p is root, stop
+        if ( p == root.p ) {
+            return;
+        }
+        else
+        {
+            Node n=root;
+
+            if ( p.x <= n.x )
+
         }
     }
 
