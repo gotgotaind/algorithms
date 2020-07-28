@@ -90,23 +90,21 @@ public class KdTree {
 
         if ( x.lr ) {
             if(p.x() <= x.p.x() ) {
-                contains(x.ld,p,! lr);
+                return contains(x.ld,p,! lr);
             }
             else {
-                contains(x.ru,p,! lr);
+                return contains(x.ru,p,! lr);
             }
         }
         else {
             if(p.y() <= x.p.y() ) {
-                contains(x.ld,p,! lr);
+                return contains(x.ld,p,! lr);
             }
             else {
-                contains(x.ru,p,! lr);
+                return contains(x.ru,p,! lr);
             }
         }
 
-
-        return false;
     }
 
 
@@ -177,6 +175,12 @@ public class KdTree {
         StdOut.println("kd contains 0.5,0.5? "+kd.contains(new Point2D(0.5,0.5)));
         kd.insert(new Point2D(0.4,0.4));
         StdOut.println("kd contains 0.4,0.4? "+kd.contains(new Point2D(0.4,0.4)));
+        StdOut.println("kd contains 0.3,0.3? "+kd.contains(new Point2D(0.3,0.3)));
+        kd.insert(new Point2D(0.3,0.3));
+        StdOut.println("kd contains 0.3,0.3? "+kd.contains(new Point2D(0.3,0.3)));
+        StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
+        kd.insert(new Point2D(0.6,0.5));
+        StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
 
     }
 }
