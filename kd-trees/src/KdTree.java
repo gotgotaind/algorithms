@@ -3,15 +3,18 @@ import edu.princeton.cs.algs4.*;
 public class KdTree {
     private Node root;
     private int size;
+    final static RectHV rootRect=new RectHV(0.0, 0.0, 1.0, 1.0);
 
     class Node {
         Point2D p;
         Node ld;
         Node ru;
-        boolean lr; // if true left/right comparison, else up/down
-        Node(Point2D p,boolean lr) {
+        private RectHV rect;  // the rectangle containing this node
+        //boolean lr; // if true left/right comparison, else up/down
+        //Node(Point2D p,boolean lr) {
+        Node(Point2D p,RectHV rect) {
             this.p=p;
-            this.lr=lr;
+            this.rect=rect;
         }
     }
 
@@ -37,15 +40,15 @@ public class KdTree {
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
         if (p == null) throw new IllegalArgumentException("calls insert() with a null point");
-        root = insert(root, p,false);
+        root = insert(root, p,true,rootRect);
         //assert check();
     }
 
-    private Node insert(Node x, Point2D p,boolean lr) {
+    private Node insert(Node x, Point2D p,boolean lr,RectHV rect) {
 
         if (x == null) {
             size=size+1;
-            return new Node(p,! lr);
+            return new Node(p,rect);
         }
 
         //int cmp = key.compareTo(x.key);
@@ -56,20 +59,20 @@ public class KdTree {
         //return x;
         if(( p.x() == x.p.x()) && (p.y() == x.p.y() ) ) return x;
 
-        if ( x.lr ) {
+        if ( lr ) {
             if(p.x() <= x.p.x() ) {
-                x.ld=insert(x.ld,p,! lr);
+                x.ld=insert(x.ld,p,! lr,new RectHV(rect.xmin(),rect.ymin(),x.p.x(),rect.ymax()));
             }
             else {
-                x.ru=insert(x.ru,p,! lr);
+                x.ru=insert(x.ru,p,! lr,new RectHV(x.p.x(),rect.ymin(),rect.xmax(),rect.ymax()));
             }
         }
         else {
             if(p.y() <= x.p.y() ) {
-                x.ld=insert(x.ld,p,! lr);
+                x.ld=insert(x.ld,p,lr,new RectHV(rect.xmin(),rect.ymin(),rect.xmax(),x.p.y()));
             }
             else {
-                x.ru=insert(x.ru,p,! lr);
+                x.ru=insert(x.ru,p,lr,new RectHV(rect.xmin(),x.p.y(),rect.xmax(),rect.ymax()));
             }
         }
 
@@ -79,7 +82,7 @@ public class KdTree {
 
     // does the tree contain point p?
     public           boolean contains(Point2D p)    {
-        return contains(root,p,false);
+        return contains(root,p,true);
 
     }
 
@@ -88,7 +91,7 @@ public class KdTree {
         if( x==null ) return false;
         if(( p.x() == x.p.x()) && (p.y() == x.p.y() ) ) return true;
 
-        if ( x.lr ) {
+        if ( lr ) {
             if(p.x() <= x.p.x() ) {
                 return contains(x.ld,p,! lr);
             }
@@ -98,25 +101,74 @@ public class KdTree {
         }
         else {
             if(p.y() <= x.p.y() ) {
-                return contains(x.ld,p,! lr);
+                return contains(x.ld,p,lr);
             }
             else {
-                return contains(x.ru,p,! lr);
+                return contains(x.ru,p,lr);
             }
         }
 
     }
 
 
-    /*
+
     // draw all points to standard draw
     public              void draw()  {
-        for(Point2D p: s ) {
-            StdDraw.point(p.x(),p.y());
+        Node n=root;
+
+
+        if ( n!=null ) {
+
+            StdDraw.setPenRadius(0.002);
+
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.line(n.p.x(),rootRect.ymin(),n.p.x(),rootRect.ymax());
+            StdDraw.setPenRadius(0.02);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            StdDraw.point(n.p.x(),n.p.y());
+            draw_children(n,false);
+
         }
 
     }
+    public void draw_children(Node n,boolean lr) {
+        if( n.ld != null ) {
 
+            StdDraw.setPenRadius(0.001);
+
+            if( lr ) {
+                StdDraw.setPenColor(StdDraw.RED);
+                StdDraw.line(n.p.x(),n.rect.ymin(),n.p.x(),n.rect.ymax());
+            }
+            else {
+                StdDraw.setPenColor(StdDraw.BLUE);
+                StdDraw.line(n.rect.xmin(),n.p.y(),n.rect.xmax(),n.p.y());
+            }
+            StdDraw.setPenRadius(0.01);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            StdDraw.point(n.ld.p.x(),n.ld.p.y());
+            draw_children(n.ld,! lr);
+        }
+        if( n.ru != null ) {
+
+            StdDraw.setPenRadius(0.001);
+
+            if( lr ) {
+                StdDraw.setPenColor(StdDraw.RED);
+                StdDraw.line(n.p.x(),n.rect.ymin(),n.p.x(),n.rect.ymax());
+            }
+            else {
+                StdDraw.setPenColor(StdDraw.BLUE);
+                StdDraw.line(n.rect.xmin(),n.p.y(),n.rect.xmax(),n.p.y());
+            }
+            StdDraw.setPenRadius(0.01);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            StdDraw.point(n.ru.p.x(),n.ru.p.y());
+            draw_children(n.ru,! lr);
+        }
+    }
+
+    /*
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect)    {
         Queue<Point2D> q=new Queue<Point2D>();
@@ -181,6 +233,7 @@ public class KdTree {
         StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
         kd.insert(new Point2D(0.6,0.5));
         StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
+        kd.draw();
 
     }
 }
