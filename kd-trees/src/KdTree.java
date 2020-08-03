@@ -133,16 +133,16 @@ public class KdTree {
     }
     public void draw_children(Node n,boolean lr) {
         if( n.ld != null ) {
-
+            Node nn=n.ld;
             StdDraw.setPenRadius(0.001);
 
             if( lr ) {
                 StdDraw.setPenColor(StdDraw.RED);
-                StdDraw.line(n.p.x(),n.rect.ymin(),n.p.x(),n.rect.ymax());
+                StdDraw.line(nn.p.x(),nn.rect.ymin(),nn.p.x(),nn.rect.ymax());
             }
             else {
                 StdDraw.setPenColor(StdDraw.BLUE);
-                StdDraw.line(n.rect.xmin(),n.p.y(),n.rect.xmax(),n.p.y());
+                StdDraw.line(nn.rect.xmin(),nn.p.y(),nn.rect.xmax(),nn.p.y());
             }
             StdDraw.setPenRadius(0.01);
             StdDraw.setPenColor(StdDraw.BLACK);
@@ -150,16 +150,16 @@ public class KdTree {
             draw_children(n.ld,! lr);
         }
         if( n.ru != null ) {
-
+            Node nn=n.ru;
             StdDraw.setPenRadius(0.001);
 
             if( lr ) {
                 StdDraw.setPenColor(StdDraw.RED);
-                StdDraw.line(n.p.x(),n.rect.ymin(),n.p.x(),n.rect.ymax());
+                StdDraw.line(nn.p.x(),nn.rect.ymin(),nn.p.x(),nn.rect.ymax());
             }
             else {
                 StdDraw.setPenColor(StdDraw.BLUE);
-                StdDraw.line(n.rect.xmin(),n.p.y(),n.rect.xmax(),n.p.y());
+                StdDraw.line(nn.rect.xmin(),nn.p.y(),nn.rect.xmax(),nn.p.y());
             }
             StdDraw.setPenRadius(0.01);
             StdDraw.setPenColor(StdDraw.BLACK);
