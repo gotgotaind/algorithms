@@ -30,7 +30,7 @@ public class KdTree {
 
     // is the set empty?
     public boolean isEmpty() {
-        if (root.p == null) {
+        if (root == null) {
             return true;
         } else {
             return false;
@@ -87,6 +87,7 @@ public class KdTree {
 
     // does the tree contain point p?
     public           boolean contains(Point2D p)    {
+        if (p == null) throw new IllegalArgumentException("calls contains() with a null point");
         return contains(root,p,true);
 
     }
@@ -176,6 +177,7 @@ public class KdTree {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect)    {
+        if (rect == null) throw new IllegalArgumentException("calls range() with a null rect");
         Queue<Point2D> q=new Queue<Point2D>();
         in_rect(root,q,rect,true);
         /*
@@ -226,23 +228,23 @@ public class KdTree {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public           Point2D nearest(Point2D p)   {
-
+        if (p == null) throw new IllegalArgumentException("calls nearest() with a null point");
         return nearest(p,root,true,root.p);
     }
 
     private Point2D nearest(Point2D p,Node n, boolean lr, Point2D nearest ) {
-        if( p.distanceTo(n.p) < p.distanceTo(nearest) ) { nearest=n.p; }
+        if( p.distanceSquaredTo(n.p) < p.distanceSquaredTo(nearest) ) { nearest=n.p; }
         if( lr ) {
             if( p.x() <= n.p.x() ) {
                 if( n.ld != null ) nearest=nearest(p,n.ld,! lr, nearest);
-                if ( ( n.p.x() - p.x() ) < p.distanceTo(nearest) ) {
+                if ( ( n.p.x() - p.x() ) < p.distanceSquaredTo(nearest) ) {
                     if ( n.ru != null ) nearest=nearest(p,n.ru,! lr, nearest);
                 }
             }
             else
             {
                 if ( n.ru != null )  nearest=nearest(p,n.ru,! lr, nearest);
-                if ( ( p.x() - n.p.x() ) < p.distanceTo(nearest) ) {
+                if ( ( p.x() - n.p.x() ) < p.distanceSquaredTo(nearest) ) {
                     if( n.ld != null )  nearest=nearest(p,n.ld,! lr, nearest);
                 }
             }
@@ -250,12 +252,12 @@ public class KdTree {
         else {
             if (p.y() <= n.p.y()) {
                 if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
-                if ((n.p.y() - p.y()) < p.distanceTo(nearest)) {
+                if ((n.p.y() - p.y()) < p.distanceSquaredTo(nearest)) {
                     if ( n.ru != null )  nearest = nearest(p, n.ru, !lr, nearest);
                 }
             } else {
                 nearest = nearest(p, n.ru, !lr, nearest);
-                if ((p.y() - n.p.y()) < p.distanceTo(nearest)) {
+                if ((p.y() - n.p.y()) < p.distanceSquaredTo(nearest)) {
                     nearest = nearest(p, n.ld, !lr, nearest);
                 }
             }

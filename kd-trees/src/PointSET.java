@@ -36,6 +36,7 @@ public class PointSET {
 
     // does the set contain point p?
     public           boolean contains(Point2D p)    {
+        if (p == null) throw new IllegalArgumentException("calls contains() with a null point");
         if( s.contains(p) ) { return true; }
         return false;
     }
@@ -50,6 +51,7 @@ public class PointSET {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect)    {
+        if (rect == null) throw new IllegalArgumentException("calls range() with a null rect");
         Queue<Point2D> q=new Queue<Point2D>();
         for(Point2D p:s ) {
             if( p.x() >= rect.xmin() && p.x() <= rect.xmax() && p.y()>=rect.ymin() && p.y() <= rect.ymax() ) {
@@ -61,12 +63,14 @@ public class PointSET {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public           Point2D nearest(Point2D p)   {
+        if (p == null) throw new IllegalArgumentException("calls nearest() with a null point");
         if ( s.isEmpty() ) { return null; }
         Double d=Double.POSITIVE_INFINITY;
         Point2D nearest=null;
         for ( Point2D q:s ) {
-            if( p!=q &&  p.distanceTo(q) < d ) {
+            if( p!=q &&  p.distanceSquaredTo(q) < d ) {
                 nearest=q;
+                d=p.distanceSquaredTo(nearest);
             }
 
         }
