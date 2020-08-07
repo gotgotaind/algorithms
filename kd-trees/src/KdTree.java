@@ -1,15 +1,20 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 
 public class KdTree {
     private Node root;
     private int size;
-    final static RectHV rootRect=new RectHV(0.0, 0.0, 1.0, 1.0);
+    final static private RectHV rootRect=new RectHV(0.0, 0.0, 1.0, 1.0);
 
-    class Node {
+    private class Node {
         Point2D p;
         Node ld;
         Node ru;
-        private RectHV rect;  // the rectangle containing this node
+        private final RectHV rect;  // the rectangle containing this node
         //boolean lr; // if true left/right comparison, else up/down
         //Node(Point2D p,boolean lr) {
         Node(Point2D p,RectHV rect) {
@@ -32,7 +37,7 @@ public class KdTree {
         }
     }
 
-    private int size()
+    public int size()
     {
         return size;
     }
@@ -131,7 +136,7 @@ public class KdTree {
         }
 
     }
-    public void draw_children(Node n,boolean lr) {
+    private void draw_children(Node n,boolean lr) {
         if( n.ld != null ) {
             Node nn=n.ld;
             StdDraw.setPenRadius(0.001);
@@ -185,7 +190,7 @@ public class KdTree {
         return q;
     }
 
-    private void in_rect(Node n,Queue<Point2D> q,RectHV rect,boolean lr) {
+    private void in_rect(Node n, Queue<Point2D> q, RectHV rect, boolean lr) {
         if( in_rect(n.p,rect) ) { q.enqueue(n.p); }
         if ( lr ) {
             if ( n.ld != null && rect.xmin() <= n.p.x() ) {
