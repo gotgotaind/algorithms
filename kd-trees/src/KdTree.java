@@ -168,33 +168,97 @@ public class KdTree {
         }
     }
 
-    /*
+
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect)    {
         Queue<Point2D> q=new Queue<Point2D>();
+        in_rect(root,q,rect,true);
+        /*
         for(Point2D p:s ) {
             if( p.x() >= rect.xmin() && p.x() <= rect.xmax() && p.y()>=rect.ymin() && p.y() <= rect.ymax() ) {
                 q.enqueue(p);
             }
         }
+        */
+
+
         return q;
     }
 
+    private void in_rect(Node n,Queue<Point2D> q,RectHV rect,boolean lr) {
+        if( in_rect(n.p,rect) ) { q.enqueue(n.p); }
+        if ( lr ) {
+            if ( n.ld != null && rect.xmin() <= n.p.x() ) {
+                in_rect(n.ld,q,rect,! lr);
+            }
+            if ( n.ru != null && rect.xmax() >= n.p.x() ) {
+                in_rect(n.ru,q,rect,! lr);
+            }
+        }
+        else
+        {
+            if ( n.ld != null && rect.ymin() <= n.p.y() ) {
+                in_rect(n.ld,q,rect,! lr);
+            }
+            if ( n.ru != null && rect.ymax() >= n.p.y() ) {
+                in_rect(n.ru,q,rect,! lr);
+            }
+        }
+        return;
+
+    }
+
+    private boolean in_rect(Point2D p,RectHV rect ) {
+        if( p.x()>=rect.xmin() && p.x()<=rect.xmax() && p.y()>=rect.ymin() && p.y()<=rect.ymax() ) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
     // a nearest neighbor in the set to point p; null if the set is empty
     public           Point2D nearest(Point2D p)   {
-        if ( s.isEmpty() ) { return null; }
-        Double d=Double.POSITIVE_INFINITY;
-        Point2D nearest=null;
-        for ( Point2D q:s ) {
-            if( p!=q &&  p.distanceTo(q) < d ) {
-                nearest=q;
-            }
 
+        return nearest(p,root,true,root.p);
+    }
+
+    private Point2D nearest(Point2D p,Node n, boolean lr, Point2D nearest ) {
+        if( p.distanceTo(n.p) < p.distanceTo(nearest) ) { nearest=n.p; }
+        if( lr ) {
+            if( p.x() <= n.p.x() ) {
+                if( n.ld != null ) nearest=nearest(p,n.ld,! lr, nearest);
+                if ( ( n.p.x() - p.x() ) < p.distanceTo(nearest) ) {
+                    if ( n.ru != null ) nearest=nearest(p,n.ru,! lr, nearest);
+                }
+            }
+            else
+            {
+                if ( n.ru != null )  nearest=nearest(p,n.ru,! lr, nearest);
+                if ( ( p.x() - n.p.x() ) < p.distanceTo(nearest) ) {
+                    if( n.ld != null )  nearest=nearest(p,n.ld,! lr, nearest);
+                }
+            }
+        }
+        else {
+            if (p.y() <= n.p.y()) {
+                if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
+                if ((n.p.y() - p.y()) < p.distanceTo(nearest)) {
+                    if ( n.ru != null )  nearest = nearest(p, n.ru, !lr, nearest);
+                }
+            } else {
+                nearest = nearest(p, n.ru, !lr, nearest);
+                if ((p.y() - n.p.y()) < p.distanceTo(nearest)) {
+                    nearest = nearest(p, n.ld, !lr, nearest);
+                }
+            }
         }
         return nearest;
     }
 
-     */
+
 
     // unit testing of the methods (optional)
     public static void main(String[] args)   {
@@ -233,7 +297,15 @@ public class KdTree {
         StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
         kd.insert(new Point2D(0.6,0.5));
         StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
+
         kd.draw();
+
+        Point2D nearest=kd.nearest(new Point2D(0.42,0.38));
+        StdOut.println("Nearest is  "+nearest.toString());
+
+        for( Point2D p : kd.range(new RectHV(0.2, 0.2, 0.42, 0.42))) {
+            StdOut.println("rect contains  "+p.toString());
+        }
 
     }
 }
