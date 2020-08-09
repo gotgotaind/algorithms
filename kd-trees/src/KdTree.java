@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
@@ -53,7 +54,9 @@ public class KdTree {
 
         if (x == null) {
             size=size+1;
-            return new Node(p,rect);
+            //draw();
+            Node niou=new Node(p,rect);
+            return niou;
         }
 
         //int cmp = key.compareTo(x.key);
@@ -74,13 +77,14 @@ public class KdTree {
         }
         else {
             if(p.y() <= x.p.y() ) {
-                x.ld=insert(x.ld,p,lr,new RectHV(rect.xmin(),rect.ymin(),rect.xmax(),x.p.y()));
+                x.ld=insert(x.ld,p,! lr,new RectHV(rect.xmin(),rect.ymin(),rect.xmax(),x.p.y()));
             }
             else {
-                x.ru=insert(x.ru,p,lr,new RectHV(rect.xmin(),x.p.y(),rect.xmax(),rect.ymax()));
+                x.ru=insert(x.ru,p,! lr,new RectHV(rect.xmin(),x.p.y(),rect.xmax(),rect.ymax()));
             }
         }
 
+        //throw new IllegalStateException("I don't think we should come here.");
         return x;
     }
 
@@ -107,10 +111,10 @@ public class KdTree {
         }
         else {
             if(p.y() <= x.p.y() ) {
-                return contains(x.ld,p,lr);
+                return contains(x.ld,p,! lr);
             }
             else {
-                return contains(x.ru,p,lr);
+                return contains(x.ru,p,! lr);
             }
         }
 
@@ -120,6 +124,8 @@ public class KdTree {
 
     // draw all points to standard draw
     public              void draw()  {
+        StdDraw.enableDoubleBuffering();
+        StdDraw.clear();
         Node n=root;
 
 
@@ -135,6 +141,8 @@ public class KdTree {
             draw_children(n,false);
 
         }
+        StdDraw.show();
+        StdDraw.pause(20);
 
     }
     private void draw_children(Node n,boolean lr) {
@@ -179,6 +187,7 @@ public class KdTree {
     public Iterable<Point2D> range(RectHV rect)    {
         if (rect == null) throw new IllegalArgumentException("calls range() with a null rect");
         Queue<Point2D> q=new Queue<Point2D>();
+        if( isEmpty() ) { return q; }
         in_rect(root,q,rect,true);
         /*
         for(Point2D p:s ) {
@@ -268,30 +277,22 @@ public class KdTree {
 
 
     // unit testing of the methods (optional)
-    public static void main(String[] args)   {
-        /*
-        RectHV rect = new RectHV(0.0, 0.0, 1.0, 1.0);
+    public static void main(String[] args) {
 
-        StdDraw.enableDoubleBuffering();
-        PointSET kdtree = new PointSET();
-        while (true) {
-            if (StdDraw.isMousePressed()) {
-                double x = StdDraw.mouseX();
-                double y = StdDraw.mouseY();
-                StdOut.printf("%8.6f %8.6f\n", x, y);
-                Point2D p = new Point2D(x, y);
-                if (rect.contains(p)) {
-                    StdOut.printf("%8.6f %8.6f\n", x, y);
-                    kdtree.insert(p);
-                    StdDraw.clear();
-                    kdtree.draw();
-                    StdDraw.show();
-                }
-            }
-            StdDraw.pause(20);
+        // initialize the data structures from file
+        String filename = args[0];
+        In in = new In(filename);
+        PointSET brute = new PointSET();
+        KdTree kdtree = new KdTree();
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            kdtree.insert(p);
+            kdtree.isEmpty();
+            brute.insert(p);
         }
-
-         */
+        kdtree.draw();
 
         KdTree kd=new KdTree();
         kd.insert(new Point2D(0.5,0.5));
@@ -305,7 +306,7 @@ public class KdTree {
         kd.insert(new Point2D(0.6,0.5));
         StdOut.println("kd contains 0.6,0.5? "+kd.contains(new Point2D(0.6,0.5)));
 
-        kd.draw();
+
 
         Point2D nearest=kd.nearest(new Point2D(0.42,0.38));
         StdOut.println("Nearest is  "+nearest.toString());
@@ -313,6 +314,8 @@ public class KdTree {
         for( Point2D p : kd.range(new RectHV(0.2, 0.2, 0.42, 0.42))) {
             StdOut.println("rect contains  "+p.toString());
         }
+
+
 
     }
 }
