@@ -238,6 +238,7 @@ public class KdTree {
     // a nearest neighbor in the set to point p; null if the set is empty
     public           Point2D nearest(Point2D p)   {
         if (p == null) throw new IllegalArgumentException("calls nearest() with a null point");
+        if ( isEmpty() ) return null;
         return nearest(p,root,true,root.p);
     }
 
@@ -265,9 +266,9 @@ public class KdTree {
                     if ( n.ru != null )  nearest = nearest(p, n.ru, !lr, nearest);
                 }
             } else {
-                nearest = nearest(p, n.ru, !lr, nearest);
+                if ( n.ru != null ) nearest = nearest(p, n.ru, !lr, nearest);
                 if ((p.y() - n.p.y()) < p.distanceSquaredTo(nearest)) {
-                    nearest = nearest(p, n.ld, !lr, nearest);
+                    if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
                 }
             }
         }
