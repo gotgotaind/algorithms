@@ -247,14 +247,14 @@ public class KdTree {
         if( lr ) {
             if( p.x() <= n.p.x() ) {
                 if( n.ld != null ) nearest=nearest(p,n.ld,! lr, nearest);
-                if ( ( n.p.x() - p.x() ) < p.distanceSquaredTo(nearest) ) {
+                if ( ( n.p.x() - p.x() ) * ( n.p.x() - p.x() ) < p.distanceSquaredTo(nearest) ) {
                     if ( n.ru != null ) nearest=nearest(p,n.ru,! lr, nearest);
                 }
             }
             else
             {
                 if ( n.ru != null )  nearest=nearest(p,n.ru,! lr, nearest);
-                if ( ( p.x() - n.p.x() ) < p.distanceSquaredTo(nearest) ) {
+                if ( ( p.x() - n.p.x() ) * ( p.x() - n.p.x() ) < p.distanceSquaredTo(nearest) ) {
                     if( n.ld != null )  nearest=nearest(p,n.ld,! lr, nearest);
                 }
             }
@@ -262,12 +262,12 @@ public class KdTree {
         else {
             if (p.y() <= n.p.y()) {
                 if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
-                if ((n.p.y() - p.y()) < p.distanceSquaredTo(nearest)) {
+                if ( ( n.p.y() - p.y() ) * ( (n.p.y() - p.y() ) ) < p.distanceSquaredTo(nearest)) {
                     if ( n.ru != null )  nearest = nearest(p, n.ru, !lr, nearest);
                 }
             } else {
                 if ( n.ru != null ) nearest = nearest(p, n.ru, !lr, nearest);
-                if ((p.y() - n.p.y()) < p.distanceSquaredTo(nearest)) {
+                if ( ( p.y() - n.p.y() ) * ( p.y() - n.p.y() ) < p.distanceSquaredTo(nearest)) {
                     if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
                 }
             }
@@ -283,18 +283,21 @@ public class KdTree {
         // initialize the data structures from file
         String filename = args[0];
         In in = new In(filename);
-        PointSET brute = new PointSET();
+        //PointSET brute = new PointSET();
         KdTree kdtree = new KdTree();
         while (!in.isEmpty()) {
             double x = in.readDouble();
             double y = in.readDouble();
             Point2D p = new Point2D(x, y);
             kdtree.insert(p);
-            kdtree.isEmpty();
-            brute.insert(p);
+            //kdtree.isEmpty();
+            //brute.insert(p);
         }
         kdtree.draw();
 
+        Point2D nearest=kdtree.nearest(new Point2D(0.271, 0.48));
+        StdOut.println("Nearest is  "+nearest.toString());
+        /*
         KdTree kd=new KdTree();
         kd.insert(new Point2D(0.5,0.5));
         StdOut.println("kd contains 0.5,0.5? "+kd.contains(new Point2D(0.5,0.5)));
@@ -317,6 +320,6 @@ public class KdTree {
         }
 
 
-
+*/
     }
 }
