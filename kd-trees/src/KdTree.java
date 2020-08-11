@@ -245,30 +245,49 @@ public class KdTree {
     private Point2D nearest(Point2D p,Node n, boolean lr, Point2D nearest ) {
         if( p.distanceSquaredTo(n.p) < p.distanceSquaredTo(nearest) ) { nearest=n.p; }
         if( lr ) {
+            double y_min_dest=0;
+            if ( p.y() < n.rect.ymin() ) {
+                y_min_dest = p.y() - n.rect.ymin();
+            }
+            else {
+                y_min_dest = p.y() - n.rect.ymax();
+            }
+
+            double dprojx = p.x() - n.p.x();
             if( p.x() <= n.p.x() ) {
                 if( n.ld != null ) nearest=nearest(p,n.ld,! lr, nearest);
-                if ( ( n.p.x() - p.x() ) * ( n.p.x() - p.x() ) < p.distanceSquaredTo(nearest) ) {
+                if ( ( y_min_dest *  y_min_dest + dprojx * dprojx ) < p.distanceSquaredTo(nearest) ) {
                     if ( n.ru != null ) nearest=nearest(p,n.ru,! lr, nearest);
                 }
             }
             else
             {
                 if ( n.ru != null )  nearest=nearest(p,n.ru,! lr, nearest);
-                if ( ( p.x() - n.p.x() ) * ( p.x() - n.p.x() ) < p.distanceSquaredTo(nearest) ) {
+                if ( ( y_min_dest *  y_min_dest + dprojx * dprojx ) < p.distanceSquaredTo(nearest) ) {
                     if( n.ld != null )  nearest=nearest(p,n.ld,! lr, nearest);
                 }
             }
         }
         else {
+            double x_min_dest=0;
+            if ( p.x() < n.rect.xmin() ) {
+                x_min_dest = p.x() - n.rect.xmin();
+            }
+            else {
+                x_min_dest = p.x() - n.rect.xmax();
+            }
+
+            double dprojy = p.y() - n.p.y();
+
             if (p.y() <= n.p.y()) {
                 if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
-                if ( ( n.p.y() - p.y() ) * ( (n.p.y() - p.y() ) ) < p.distanceSquaredTo(nearest)) {
+                if ( ( x_min_dest *  x_min_dest + dprojy * dprojy ) < p.distanceSquaredTo(nearest)) {
                     if ( n.ru != null )  nearest = nearest(p, n.ru, !lr, nearest);
                 }
             } else {
                 if ( n.ru != null ) nearest = nearest(p, n.ru, !lr, nearest);
-                if ( ( p.y() - n.p.y() ) * ( p.y() - n.p.y() ) < p.distanceSquaredTo(nearest)) {
-                    if( n.ld != null )  nearest = nearest(p, n.ld, !lr, nearest);
+                if ( ( x_min_dest *  x_min_dest + dprojy * dprojy ) < p.distanceSquaredTo(nearest)) {
+                    if (n.ld != null) nearest = nearest(p, n.ld, !lr, nearest);
                 }
             }
         }
@@ -295,7 +314,7 @@ public class KdTree {
         }
         kdtree.draw();
 
-        Point2D nearest=kdtree.nearest(new Point2D(0.271, 0.48));
+        Point2D nearest=kdtree.nearest(new Point2D(0.28, 0.48));
         StdOut.println("Nearest is  "+nearest.toString());
         /*
         KdTree kd=new KdTree();
