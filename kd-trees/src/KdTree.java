@@ -67,20 +67,50 @@ public class KdTree {
         //return x;
         if(( p.x() == x.p.x()) && (p.y() == x.p.y() ) ) return x;
 
+        double rxmin=rect.xmin();
+        double rxmax=rect.xmax();
+        double rymin=rect.ymin();
+        double rymax=rect.ymax();
+
         if ( lr ) {
             if(p.x() <= x.p.x() ) {
-                x.ld=insert(x.ld,p,! lr,new RectHV(rect.xmin(),rect.ymin(),x.p.x(),rect.ymax()));
+                // this if is to avoid recreating a new rectHV if the node already exists
+                if( x.ld == null ) {
+                    x.ld = insert(x.ld, p, !lr, new RectHV(rxmin, rymin, x.p.x(), rymax));
+                }
+                else
+                {
+                    x.ld = insert( x.ld, p, !lr, x.ld.rect );
+                }
             }
             else {
-                x.ru=insert(x.ru,p,! lr,new RectHV(x.p.x(),rect.ymin(),rect.xmax(),rect.ymax()));
+                if( x.ru == null ) {
+                    x.ru = insert(x.ru, p, !lr, new RectHV(x.p.x(), rymin, rxmax, rymax));
+                }
+                else
+                {
+                    x.ru = insert(x.ru, p, !lr, x.ru.rect);
+                }
             }
         }
         else {
             if(p.y() <= x.p.y() ) {
-                x.ld=insert(x.ld,p,! lr,new RectHV(rect.xmin(),rect.ymin(),rect.xmax(),x.p.y()));
+                if ( x.ld == null ) {
+                    x.ld = insert(x.ld, p, !lr, new RectHV(rxmin, rymin, rxmax, x.p.y()));
+                }
+                else
+                {
+                    x.ld = insert(x.ld, p, !lr, x.ld.rect );
+                }
             }
             else {
-                x.ru=insert(x.ru,p,! lr,new RectHV(rect.xmin(),x.p.y(),rect.xmax(),rect.ymax()));
+                if( x.ru == null ) {
+                    x.ru = insert(x.ru, p, !lr, new RectHV(rxmin, x.p.y(), rxmax, rymax));
+                }
+                else
+                {
+                    x.ru = insert(x.ru, p, !lr, x.ru.rect );
+                }
             }
         }
 
