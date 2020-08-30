@@ -3,10 +3,11 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class WordNet {
 
-    ArrayList<String> synset;
+    ArrayList<String[]> synset;
     Digraph dg;
 
     // constructor takes the name of the two input files
@@ -14,11 +15,11 @@ public class WordNet {
         if (synsets == null || hypernyms == null ) throw new IllegalArgumentException();
 
         In in = new In(synsets);
-        this.synset = new ArrayList<String>();
+        this.synset = new ArrayList<String[]>();
 
         while ( ! in.isEmpty() ) {
             String[] line = in.readLine().split(",");
-            synset.add(line[1]);
+            synset.add(line[1].split(" "));
         }
 
         dg=new Digraph(synset.size());
@@ -41,15 +42,68 @@ public class WordNet {
         }
     }
 
+    private class nouns_iterator implements  Iterator<String> {
+        private int current_synset;
+        private int current_word;
+        public nouns_iterator() {
+            current_synset=0;
+            current_word=0;
+        }
+
+        public boolean hasNext() {
+            if( current_word < synset.get(current_synset).length ) {
+                return true;
+            }
+            else
+            {
+                if( current_synset < synset.size() ) {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+        }
+
+        public String next() {
+            if( current_word < synset.get(current_synset).length ) {
+                current_word++;
+                return synset.get(current_synset)[current_word-1];
+            }
+            else
+            {
+                if( current_synset < synset.size() ) {
+                    current_word=1;
+                    current_synset++;
+                    return synset.get(current_synset-1)[current_word-1];
+                }
+                else
+                {
+                    throw new IllegalStateException("Next called with no next.");
+                }
+            }
+
+        }
+    }
+
+
+    private class nouns_iterable implements Iterable<String> {
+        public Iterator<String> iterator() {
+            return new nouns_iterator();
+        }
+
+    }
     // returns all WordNet nouns
     public Iterable<String> nouns() {
-        return synset;
+        return new nouns_iterable();
     }
 
     // is the word a WordNet noun?
     public boolean isNoun(String word) {
         if (word == null ) throw new IllegalArgumentException();
-        return true;
+        return synset.contains(word);
     }
 
     // distance between nounA and nounB (defined below)
@@ -69,6 +123,11 @@ public class WordNet {
     public static void main(String[] args) {
         WordNet wn=new WordNet("synsets.txt","hypernyms.txt");
 
+        String a=new String("babo");
+        StdOut.println("Is '"+a+"' a noun? : "+wn.isNoun(a));
+
+        a=new String("zoophilia zoophilism");
+        StdOut.println("Is '"+a+"' a noun? : "+wn.isNoun(a));
         /*
         StdOut.println("1000 word is "+wn.synset.get(1000));
 
@@ -79,6 +138,13 @@ public class WordNet {
         */
 
         // StdOut.println(wn.dg.toString());
+        int i=0;
+        for(String w:wn.nouns()) {
+            StdOut.println(w);
+            i++;
+            if (i> 10 ) break;
+
+        }
 
     }
 }
