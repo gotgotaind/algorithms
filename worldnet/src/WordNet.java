@@ -56,7 +56,7 @@ public class WordNet {
             }
             else
             {
-                if( current_synset < synset.size() ) {
+                if( current_synset < synset.size() - 1 ) {
                     return true;
                 }
                 else
@@ -77,7 +77,7 @@ public class WordNet {
                 if( current_synset < synset.size() ) {
                     current_word=1;
                     current_synset++;
-                    return synset.get(current_synset-1)[current_word-1];
+                    return synset.get(current_synset)[current_word-1];
                 }
                 else
                 {
@@ -122,6 +122,8 @@ public class WordNet {
     // do unit testing of this class
     public static void main(String[] args) {
         WordNet wn=new WordNet("synsets.txt","hypernyms.txt");
+        //WordNet wn=new WordNet("C:\\data\\projects\\algorithm\\wordnet\\synsets15.txt","C:\\data\\projects\\algorithm\\wordnet\\hypernyms15Path.txt");
+
 
         String a=new String("babo");
         StdOut.println("Is '"+a+"' a noun? : "+wn.isNoun(a));
@@ -142,7 +144,7 @@ public class WordNet {
         for(String w:wn.nouns()) {
             StdOut.println(w);
             i++;
-            if (i> 10 ) break;
+            //if (i> 30 ) break;
 
         }
 
