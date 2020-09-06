@@ -12,6 +12,7 @@ public class WordNet {
 
     HashMap<String, Bag<Integer>> nouns_synsets;
     Digraph dg;
+    ArrayList<String> synsets;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -19,10 +20,12 @@ public class WordNet {
 
         In in = new In(synsets);
         this.nouns_synsets = new HashMap<String, Bag<Integer>>();
+        this.synsets=new ArrayList<String>();
 
         int line_nb=0;
         while ( ! in.isEmpty() ) {
             String[] line = in.readLine().split(",");
+            this.synsets.add(line_nb,line[1]);
             for( String s:line[1].split(" ")) {
                 // initialize new nouns_synsets key if it does not exist
                 if ( ! nouns_synsets.containsKey(s)) {
@@ -67,14 +70,16 @@ public class WordNet {
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
         if (nounA == null || nounA == null ) throw new IllegalArgumentException();
-        return 0;
+        SAP sap=new SAP(dg);
+        return sap.length(nouns_synsets.get(nounA),nouns_synsets.get(nounB));
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
         if (nounA == null || nounA == null ) throw new IllegalArgumentException();
-        return new String();
+        SAP sap=new SAP(dg);
+        return synsets.get(sap.ancestor(nouns_synsets.get(nounA),nouns_synsets.get(nounB)));
     }
 
     // do unit testing of this class
@@ -83,7 +88,7 @@ public class WordNet {
         //WordNet wn=new WordNet("C:\\data\\projects\\algorithm\\wordnet\\synsets15.txt","C:\\data\\projects\\algorithm\\wordnet\\hypernyms15Path.txt");
 
 
-        String a=new String("babo");
+        String a=new String("baboo");
         StdOut.println("Is '"+a+"' a noun? : "+wn.isNoun(a));
 
         a=new String("zoophilia zoophilism");
@@ -97,6 +102,7 @@ public class WordNet {
         }
         */
 
+        /*
         // StdOut.println(wn.dg.toString());
         int i=0;
         for(String w:wn.nouns()) {
@@ -105,6 +111,10 @@ public class WordNet {
             //if (i> 30 ) break;
 
         }
+
+        */
+        StdOut.println(wn.sap("horse","zebra"));
+
 
     }
 }

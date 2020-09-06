@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
@@ -20,51 +21,70 @@ public class SAP {
         }
     }
 
+    private int[] shortest_ancestral_path(Iterable<Integer> v, Iterable<Integer> w) {
+        validateVertices(v);
+        validateVertices(w);
 
-    // length of shortest ancestral path between v and w; -1 if no such path
-    public int length(int v, int w) {
-        validateVertex(v);
-        validateVertex(w);
+        BreadthFirstDirectedPaths bfsv = new BreadthFirstDirectedPaths(G, v);
+        BreadthFirstDirectedPaths bfsw = new BreadthFirstDirectedPaths(G, w);
 
-        BreadthFirstDirectedPaths bfsv=new BreadthFirstDirectedPaths(G,v);
-        BreadthFirstDirectedPaths bfsw=new BreadthFirstDirectedPaths(G,w);
+        int length = Integer.MAX_VALUE;
+        int sca = -1;
+        boolean has_path = false;
 
-        int length=Integer.MAX_VALUE;
-        boolean has_path=false;
-
-        for(int x=0; x < G.V() ;x++) {
-            if( bfsv.hasPathTo(x) && bfsw.hasPathTo(x)) {
-                has_path=true;
+        for (int x = 0; x < G.V(); x++) {
+            if (bfsv.hasPathTo(x) && bfsw.hasPathTo(x)) {
+                has_path = true;
                 int sum = bfsv.distTo(x) + bfsw.distTo(x);
                 if (sum < length) {
                     length = sum;
+                    sca = x;
 
                 }
             }
         }
 
-        if( has_path ) {
-            return length;
+        if (has_path) {
+            return new int[]{sca,length};
+        } else {
+            return new int[]{-1,-1};
         }
-        else
-        {
-            return -1;
-        }
+    }
+
+
+    // length of shortest ancestral path between v and w; -1 if no such path
+    public int length(int v, int w) {
+
+        // Just make an Iterable structure containing just one element of v and w to pass as
+        // argument to shortest_ancestral_path
+        Bag<Integer> vv=new Bag<Integer>();
+        vv.add(v);
+        Bag<Integer> ww=new Bag<Integer>();
+        ww.add(w);
+
+        return shortest_ancestral_path(vv, ww)[1];
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        return 2;
+        // Just make an Iterable structure containing just one element of v and w to pass as
+        // argument to shortest_ancestral_path
+        Bag<Integer> vv=new Bag<Integer>();
+        vv.add(v);
+        Bag<Integer> ww=new Bag<Integer>();
+        ww.add(w);
+
+        return shortest_ancestral_path(vv, ww)[0];
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return 2;
+        return shortest_ancestral_path(v, w)[1];
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return 2;
+        return shortest_ancestral_path(v, w)[0];
     }
 
     // throw an IllegalArgumentException unless {@code 0 <= v < V}
