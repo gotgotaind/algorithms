@@ -5,22 +5,22 @@ public class Outcast {
     private final WordNet wn;
     public Outcast(WordNet wordnet)         // constructor takes a WordNet object
     {
-        wn=wordnet;
+        wn = wordnet;
     }
 
     public String outcast(String[] nouns)   // given an array of WordNet nouns, return an outcast
     {
-        int[] d=new int[nouns.length];
-        int max=0;
-        int max_id=0;
+        int[] d = new int[nouns.length];
+        int max = 0;
+        int max_id = 0;
 
-        for( int i=0 ; i<nouns.length ; i++ ) {
-            for( int j=0 ; j<nouns.length ; j++ ) {
-                d[i] = d[i]+wn.distance(nouns[i],nouns[j]);
+        for( int i = 0; i < nouns.length; i++ ) {
+            for( int j = 0; j < nouns.length; j++ ) {
+                d[i] = d[i] + wn.distance(nouns[i],nouns[j]);
             }
             if ( d[i] > max ) {
-                max=d[i];
-                max_id=i;
+                max = d[i];
+                max_id = i;
             }
         }
         return nouns[max_id];

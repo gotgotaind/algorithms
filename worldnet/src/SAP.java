@@ -9,7 +9,7 @@ public class SAP {
     private final Digraph G;
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
-        if (G == null ) throw new IllegalArgumentException();
+        if (G == null) throw new IllegalArgumentException();
         this.G=new Digraph(G.V());
 
         // make this.G a copy of G so that it can be an immutable private attribute of DAG

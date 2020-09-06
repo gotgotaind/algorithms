@@ -3,16 +3,16 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.lang.reflect.Array;
+// import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+// import java.util.Iterator;
 
 public class WordNet {
 
-    HashMap<String, Bag<Integer>> nouns_synsets;
-    Digraph dg;
-    ArrayList<String> synsets;
+    private final HashMap<String, Bag<Integer>> nouns_synsets;
+    private final Digraph dg;
+    private final ArrayList<String> synsets;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -69,7 +69,7 @@ public class WordNet {
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
-        if (nounA == null || nounA == null ) throw new IllegalArgumentException();
+        if (nounA == null || nounB == null ) throw new IllegalArgumentException();
         SAP sap=new SAP(dg);
         return sap.length(nouns_synsets.get(nounA),nouns_synsets.get(nounB));
     }
@@ -77,7 +77,7 @@ public class WordNet {
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
-        if (nounA == null || nounA == null ) throw new IllegalArgumentException();
+        if (nounA == null || nounB == null ) throw new IllegalArgumentException();
         SAP sap=new SAP(dg);
         return synsets.get(sap.ancestor(nouns_synsets.get(nounA),nouns_synsets.get(nounB)));
     }
@@ -88,10 +88,11 @@ public class WordNet {
         //WordNet wn=new WordNet("C:\\data\\projects\\algorithm\\wordnet\\synsets15.txt","C:\\data\\projects\\algorithm\\wordnet\\hypernyms15Path.txt");
 
 
-        String a=new String("baboo");
+        //String a=new String("baboo");
+        String a="baboo";
         StdOut.println("Is '"+a+"' a noun? : "+wn.isNoun(a));
 
-        a=new String("zoophilia zoophilism");
+        a="zoophilia zoophilism";
         StdOut.println("Is '"+a+"' a noun? : "+wn.isNoun(a));
         /*
         StdOut.println("1000 word is "+wn.synset.get(1000));
