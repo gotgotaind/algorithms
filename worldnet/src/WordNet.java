@@ -1,7 +1,9 @@
 import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Topological;
 
 // import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -11,8 +13,9 @@ import java.util.HashMap;
 public class WordNet {
 
     private final HashMap<String, Bag<Integer>> nouns_synsets;
-    private final Digraph dg;
+
     private final ArrayList<String> synsets;
+    private final SAP sap;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -36,7 +39,7 @@ public class WordNet {
             line_nb++;
         }
 
-        dg=new Digraph(line_nb);
+        Digraph dg=new Digraph(line_nb);
 
         in = new In(hypernyms);
         while ( ! in.isEmpty() ) {
@@ -54,6 +57,37 @@ public class WordNet {
 
             }
         }
+
+        /*
+        DirectedCycle dc=new DirectedCycle(dg);
+        if( dc.hasCycle() ) {
+            throw new IllegalArgumentException("Not a DAG");
+        }
+        */
+
+        Topological topo=new Topological(dg);
+        if ( ! topo.hasOrder() ) {
+            throw new IllegalArgumentException("Not a DAG");
+        }
+
+        /*
+        int first=topo.order().iterator().next();
+        if ( dg.outdegree(first) > 1 ) {
+            throw new IllegalArgumentException("Not a rooted DAG");
+        }
+        */
+
+        int root = -1;
+        for (int v = 0; v < dg.V(); v++) {
+            if (dg.outdegree(v) == 0) {
+                if (root != -1) {
+                    throw new IllegalArgumentException("Not a rooted DAG");
+                }
+                root=v;
+            }
+        }
+
+        sap=new SAP(dg);
     }
 
     // returns all WordNet nouns
@@ -70,7 +104,6 @@ public class WordNet {
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
         if (nounA == null || nounB == null ) throw new IllegalArgumentException();
-        SAP sap=new SAP(dg);
         return sap.length(nouns_synsets.get(nounA),nouns_synsets.get(nounB));
     }
 
@@ -78,13 +111,12 @@ public class WordNet {
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
         if (nounA == null || nounB == null ) throw new IllegalArgumentException();
-        SAP sap=new SAP(dg);
         return synsets.get(sap.ancestor(nouns_synsets.get(nounA),nouns_synsets.get(nounB)));
     }
 
     // do unit testing of this class
     public static void main(String[] args) {
-        WordNet wn=new WordNet("synsets.txt","hypernyms.txt");
+        WordNet wn=new WordNet("synsets3.txt","hypernyms3InvalidTwoRoots.txt");
         //WordNet wn=new WordNet("C:\\data\\projects\\algorithm\\wordnet\\synsets15.txt","C:\\data\\projects\\algorithm\\wordnet\\hypernyms15Path.txt");
 
 

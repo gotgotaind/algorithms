@@ -79,11 +79,24 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        if ( v == null || w == null ) {
+            throw new IllegalArgumentException("argument is null");
+        }
+        if ( ! v.iterator().hasNext() || ! w.iterator().hasNext() ) {
+            return -1;
+        }
         return shortest_ancestral_path(v, w)[1];
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        if ( v == null || w == null ) {
+            throw new IllegalArgumentException("argument is null");
+        }
+
+        if ( ! v.iterator().hasNext() || ! w.iterator().hasNext() ) {
+            return -1;
+        }
         return shortest_ancestral_path(v, w)[0];
     }
 
@@ -99,12 +112,16 @@ public class SAP {
         if (vertices == null) {
             throw new IllegalArgumentException("argument is null");
         }
+
+
         for (Integer v : vertices) {
             if (v == null) {
                 throw new IllegalArgumentException("vertex is null");
             }
             validateVertex(v);
         }
+
+
     }
 
 

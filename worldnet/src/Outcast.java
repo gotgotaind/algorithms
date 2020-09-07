@@ -14,11 +14,11 @@ public class Outcast {
         int max = 0;
         int max_id = 0;
 
-        for( int i = 0; i < nouns.length; i++ ) {
-            for( int j = 0; j < nouns.length; j++ ) {
+        for (int i = 0; i < nouns.length; i++) {
+            for (int j = 0; j < nouns.length; j++) {
                 d[i] = d[i] + wn.distance(nouns[i],nouns[j]);
             }
-            if ( d[i] > max ) {
+            if (d[i] > max) {
                 max = d[i];
                 max_id = i;
             }
@@ -27,9 +27,9 @@ public class Outcast {
     }
     public static void main(String[] args)  // see test client below
     {
-        WordNet wordnet = new WordNet("synsets.txt","hypernyms.txt");
+        WordNet wordnet = new WordNet("synsets.txt", "hypernyms.txt");
         Outcast outcast = new Outcast(wordnet);
-            String outcasts_file="outcast11.txt";
+            String outcasts_file = "outcast11.txt";
             In in = new In(outcasts_file);
             String[] nouns = in.readAllStrings();
             StdOut.println(outcasts_file + ": " + outcast.outcast(nouns));
