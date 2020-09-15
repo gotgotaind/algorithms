@@ -8,7 +8,7 @@ public class SeamCarver {
 
     private Picture picture;
     private double[][] energy;
-    int w,h;
+    private int w,h;
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         if (picture == null ) throw new IllegalArgumentException();
@@ -27,21 +27,32 @@ public class SeamCarver {
                 }
                 else
                 {
-                    float[] rgb0;
-                    float[] rgb1;
+                    float[] rgb0=new float[3];
+                    float[] rgb1=new float[3];
 
-                    rgb0=picture.get(col+1,row).getRGBColorComponents(null);
-                    rgb1=picture.get(col-1,row).getRGBColorComponents(null);
+                    rgb0[0]=picture.get(col+1,row).getRed();
+                    rgb0[1]=picture.get(col+1,row).getGreen();
+                    rgb0[2]=picture.get(col+1,row).getBlue();
+                    //rgb1=picture.get(col-1,row).getRGBColorComponents(null);
+                    rgb1[0]=picture.get(col-1,row).getRed();
+                    rgb1[1]=picture.get(col-1,row).getGreen();
+                    rgb1[2]=picture.get(col-1,row).getBlue();
                     double dx2=0;
                     for(int i=0; i<3; i++) {
-                        dx2=dx2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i])*255*255;
+                        dx2=dx2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i]);
                     }
 
-                    rgb0=picture.get(col,row+1).getRGBColorComponents(null);
-                    rgb1=picture.get(col,row-1).getRGBColorComponents(null);
+                    //rgb0=picture.get(col,row+1).getRGBColorComponents(null);
+                    //rgb1=picture.get(col,row-1).getRGBColorComponents(null);
+                    rgb0[0]=picture.get(col,row+1).getRed();
+                    rgb0[1]=picture.get(col,row+1).getGreen();
+                    rgb0[2]=picture.get(col,row+1).getBlue();
+                    rgb1[0]=picture.get(col,row-1).getRed();
+                    rgb1[1]=picture.get(col,row-1).getGreen();
+                    rgb1[2]=picture.get(col,row-1).getBlue();
                     double dy2=0;
                     for(int i=0; i<3; i++) {
-                        dy2=dy2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i])*255*255;
+                        dy2=dy2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i]);
                     }
 
                     energy[col][row]=Math.sqrt(dx2+dy2);
@@ -70,11 +81,65 @@ public class SeamCarver {
 
     // energy of pixel at column x and row y
     public double energy(int x, int y) {
+        if( x < 0 || x > w -1 || y < 0 || y > h - 1 ) throw new IllegalArgumentException();
         return energy[x][y];
     }
 
     // sequence of indices for horizontal seam
-    //public int[] findHorizontalSeam()
+    public int[] findHorizontalSeam() {
+        int[][] parent=new int[w][h];
+        double path_energy[][]=new double[w][h];
+        int[] possible_parent={-1,0,1};
+        for (int r = 0; r < h; r++) {
+            path_energy[0][r]=energy[0][r];
+        }
+        for(int c = 1; c < w; c++) {
+            for (int r = 0; r < h; r++) {
+                double min_parent_nrg=Double.POSITIVE_INFINITY;
+                int best_min_parent_delta=10;
+                for(int parent_pix_delta:possible_parent) {
+                    if ( r + parent_pix_delta > 0 && r + parent_pix_delta < h ) {
+                        double parent_pix_nrg = path_energy[c - 1][r + parent_pix_delta];
+                        if (parent_pix_nrg < min_parent_nrg) {
+                            best_min_parent_delta = parent_pix_delta;
+                            min_parent_nrg = parent_pix_nrg;
+                        }
+                    }
+                }
+                path_energy[c][r]=min_parent_nrg+energy(c,r);
+
+                if( best_min_parent_delta == 10 ) throw new IllegalStateException();
+                parent[c][r]=r+best_min_parent_delta;
+            }
+        }
+
+        double min_path_nrg=Double.POSITIVE_INFINITY;
+        int min_path_row=-1;
+        for(int r = 0; r < h; r++) {
+            double c_path_energy = path_energy[w-1][r];
+            if ( c_path_energy < min_path_nrg ) {
+                min_path_nrg = c_path_energy;
+                min_path_row = r;
+            }
+        }
+        if( min_path_row == -1 )  throw new IllegalStateException();
+
+        Stack<Integer> s = new Stack<Integer>();
+        int last=min_path_row;
+        s.push(last);
+        for( int c = w-1; c > 0; c-- ) {
+            last=parent[c][last];
+            s.push(last);
+        }
+
+        int[] result=new int[w];
+        int c=0;
+        for( int r:s) {
+            result[c]=r;
+            c++;
+        }
+        return result;
+    }
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
@@ -133,10 +198,54 @@ public class SeamCarver {
     }
 
     // remove horizontal seam from current picture
-    //public void removeHorizontalSeam(int[] seam)
+    public void removeHorizontalSeam(int[] seam) {
+        if(seam == null) throw new IllegalArgumentException();
+        if(seam.length != w) throw new IllegalArgumentException();
+
+        for(int c = 1; c < w; c++) {
+            if( Math.abs(seam[c] - seam[c - 1]) > 1 ) throw new IllegalArgumentException();
+        }
+
+        if ( h <= 1 ) throw new IllegalArgumentException();
+
+        Picture np=new Picture(w,h-1);
+        for(int c = 0; c < w ; c++) {
+            int jump=0;
+            for(int r = 0; r < h - 1; r++) {
+                if( r == seam[c] ) {
+                    jump = 1;
+                }
+                np.set(c,r,picture.get(c,r+jump));
+            }
+        }
+        picture=np;
+        h=h-1;
+    }
 
     // remove vertical seam from current picture
-    //public void removeVerticalSeam(int[] seam)
+    public void removeVerticalSeam(int[] seam) {
+        if (seam == null ) throw new IllegalArgumentException();
+        if(seam.length != h) throw new IllegalArgumentException();
+
+        for(int r = 1; r < h; r++) {
+            if( Math.abs(seam[r] - seam[r - 1]) > 1 ) throw new IllegalArgumentException();
+        }
+
+        if ( w <= 1 ) throw new IllegalArgumentException();
+
+        Picture np=new Picture(w-1,h);
+        for(int r = 0; r < h ; r++) {
+            int jump=0;
+            for(int c = 0; c < w - 1; c++) {
+                if( c == seam[r] ) {
+                    jump = 1;
+                }
+                np.set(c,r,picture.get(c+jump,r));
+            }
+        }
+        picture=np;
+        w=w-1;
+    }
 
     //  unit testing (optional)
     public static void main(String[] args) {
@@ -145,6 +254,9 @@ public class SeamCarver {
         SeamCarver sc=new SeamCarver(p);
         StdOut.println(sc.energy(1,2));
         StdOut.println( Arrays.toString(sc.findVerticalSeam() ) );
+        StdOut.println( Arrays.toString(sc.findHorizontalSeam() ) );
+        sc.removeHorizontalSeam(sc.findHorizontalSeam());
+        sc.removeVerticalSeam(sc.findVerticalSeam());
     }
 
 }
