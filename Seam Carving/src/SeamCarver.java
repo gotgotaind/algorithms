@@ -33,7 +33,6 @@ public class SeamCarver {
                     rgb0[0]=picture.get(col+1,row).getRed();
                     rgb0[1]=picture.get(col+1,row).getGreen();
                     rgb0[2]=picture.get(col+1,row).getBlue();
-                    //rgb1=picture.get(col-1,row).getRGBColorComponents(null);
                     rgb1[0]=picture.get(col-1,row).getRed();
                     rgb1[1]=picture.get(col-1,row).getGreen();
                     rgb1[2]=picture.get(col-1,row).getBlue();
@@ -42,8 +41,6 @@ public class SeamCarver {
                         dx2=dx2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i]);
                     }
 
-                    //rgb0=picture.get(col,row+1).getRGBColorComponents(null);
-                    //rgb1=picture.get(col,row-1).getRGBColorComponents(null);
                     rgb0[0]=picture.get(col,row+1).getRed();
                     rgb0[1]=picture.get(col,row+1).getGreen();
                     rgb0[2]=picture.get(col,row+1).getBlue();
@@ -66,7 +63,8 @@ public class SeamCarver {
 
     // current picture
     public Picture picture() {
-        return picture;
+        Picture np = new Picture(picture);
+        return np;
     }
 
     // width of current picture
@@ -98,7 +96,7 @@ public class SeamCarver {
                 double min_parent_nrg=Double.POSITIVE_INFINITY;
                 int best_min_parent_delta=10;
                 for(int parent_pix_delta:possible_parent) {
-                    if ( r + parent_pix_delta > 0 && r + parent_pix_delta < h ) {
+                    if ( r + parent_pix_delta >= 0 && r + parent_pix_delta < h ) {
                         double parent_pix_nrg = path_energy[c - 1][r + parent_pix_delta];
                         if (parent_pix_nrg < min_parent_nrg) {
                             best_min_parent_delta = parent_pix_delta;
@@ -154,7 +152,7 @@ public class SeamCarver {
                 double min_parent_nrg=Double.POSITIVE_INFINITY;
                 int best_min_parent_delta=10;
                 for(int parent_pix_delta:possible_parent) {
-                    if ( c + parent_pix_delta > 0 && c + parent_pix_delta < w ) {
+                    if ( c + parent_pix_delta >= 0 && c + parent_pix_delta < w ) {
                         double parent_pix_nrg = path_energy[c + parent_pix_delta][r - 1];
                         if (parent_pix_nrg < min_parent_nrg) {
                             best_min_parent_delta = parent_pix_delta;
@@ -206,6 +204,10 @@ public class SeamCarver {
             if( Math.abs(seam[c] - seam[c - 1]) > 1 ) throw new IllegalArgumentException();
         }
 
+        for(int c = 0; c < w; c++) {
+            if( seam[c] < 0 || seam[c] > w - 1 ) throw new IllegalArgumentException();
+        }
+
         if ( h <= 1 ) throw new IllegalArgumentException();
 
         Picture np=new Picture(w,h-1);
@@ -231,6 +233,10 @@ public class SeamCarver {
             if( Math.abs(seam[r] - seam[r - 1]) > 1 ) throw new IllegalArgumentException();
         }
 
+        for(int r = 1; r < h; r++) {
+            if( seam[r] < 0 || seam[r] > h - 1 ) throw new IllegalArgumentException();
+        }
+
         if ( w <= 1 ) throw new IllegalArgumentException();
 
         Picture np=new Picture(w-1,h);
@@ -250,9 +256,9 @@ public class SeamCarver {
     //  unit testing (optional)
     public static void main(String[] args) {
         // test energy method
-        Picture p=new Picture("6x5.png");
+        Picture p=new Picture("1x8.png");
         SeamCarver sc=new SeamCarver(p);
-        StdOut.println(sc.energy(1,2));
+        //StdOut.println(sc.energy(1,2));
         StdOut.println( Arrays.toString(sc.findVerticalSeam() ) );
         StdOut.println( Arrays.toString(sc.findHorizontalSeam() ) );
         sc.removeHorizontalSeam(sc.findHorizontalSeam());
