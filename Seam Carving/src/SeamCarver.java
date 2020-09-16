@@ -18,48 +18,39 @@ public class SeamCarver {
 
         energy=new double[w][h];
 
-
-
         for(int col=0; col < w; col++) {
             for(int row=0; row < h; row++) {
-                if ( row == 0 || col == 0 || row == h-1 || col == w-1 ) {
-                    energy[col][row]=1000;
+                    energy[col][row]=compute_energy(col, row);
                 }
-                else
-                {
-                    float[] rgb0=new float[3];
-                    float[] rgb1=new float[3];
+        }
+    }
 
-                    rgb0[0]=picture.get(col+1,row).getRed();
-                    rgb0[1]=picture.get(col+1,row).getGreen();
-                    rgb0[2]=picture.get(col+1,row).getBlue();
-                    rgb1[0]=picture.get(col-1,row).getRed();
-                    rgb1[1]=picture.get(col-1,row).getGreen();
-                    rgb1[2]=picture.get(col-1,row).getBlue();
-                    double dx2=0;
-                    for(int i=0; i<3; i++) {
-                        dx2=dx2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i]);
-                    }
+    private double compute_energy(int col, int row) {
+        if (row == 0 || col == 0 || row == h - 1 || col == w - 1) {
+            return(1000);
+        } else {
 
-                    rgb0[0]=picture.get(col,row+1).getRed();
-                    rgb0[1]=picture.get(col,row+1).getGreen();
-                    rgb0[2]=picture.get(col,row+1).getBlue();
-                    rgb1[0]=picture.get(col,row-1).getRed();
-                    rgb1[1]=picture.get(col,row-1).getGreen();
-                    rgb1[2]=picture.get(col,row-1).getBlue();
-                    double dy2=0;
-                    for(int i=0; i<3; i++) {
-                        dy2=dy2+(rgb1[i]-rgb0[i])*(rgb1[i]-rgb0[i]);
-                    }
-
-                    energy[col][row]=Math.sqrt(dx2+dy2);
-                }
-            }
+            int c0 = picture.getRGB(col + 1, row);
+            int c1 = picture.getRGB(col - 1, row);
+            double dx2 = compute_delta_square(c0,c1);
+            c0 = picture.getRGB(col, row + 1);
+            c1 = picture.getRGB(col, row - 1);
+            double dy2 = compute_delta_square(c0,c1);
+            return Math.sqrt(dx2+dy2);
         }
 
-
-
     }
+
+    private static int compute_delta_square(int c1, int c2) {
+        int r1 = (c1 >> 16) & 0xFF;
+        int g1 = (c1 >>  8) & 0xFF;
+        int b1 = (c1 >>  0) & 0xFF;
+        int r2 = (c2 >> 16) & 0xFF;
+        int g2 = (c2 >>  8) & 0xFF;
+        int b2 = (c2 >>  0) & 0xFF;        
+        return (r1-r2)*(r1-r2)+(g1-g2)*(g1-g2)+(b1-b2)*(b1-b2);
+    }
+
 
     // current picture
     public Picture picture() {
@@ -205,12 +196,14 @@ public class SeamCarver {
         }
 
         for(int c = 0; c < w; c++) {
-            if( seam[c] < 0 || seam[c] > w - 1 ) throw new IllegalArgumentException();
+            if( seam[c] < 0 || seam[c] > h - 1 ) throw new IllegalArgumentException();
         }
 
         if ( h <= 1 ) throw new IllegalArgumentException();
 
         Picture np=new Picture(w,h-1);
+        double[][] ne=new double[w][h-1];
+
         for(int c = 0; c < w ; c++) {
             int jump=0;
             for(int r = 0; r < h - 1; r++) {
@@ -218,10 +211,20 @@ public class SeamCarver {
                     jump = 1;
                 }
                 np.set(c,r,picture.get(c,r+jump));
+                ne[c][r]=energy[c][r+jump];
             }
         }
         picture=np;
         h=h-1;
+
+        // recompute enery around the seam
+        for(int c = 0; c < w ; c++) {
+            if ( seam[c] < h  ) ne[c][seam[c]]=compute_energy(c,seam[c]);
+            if ( seam[c] > 0 ) ne[c][seam[c]-1]=compute_energy(c,seam[c]-1);
+            if ( seam[c] < h - 1  ) ne[c][seam[c]+1]=compute_energy(c,seam[c]+1);
+        }
+        energy=ne;
+
     }
 
     // remove vertical seam from current picture
@@ -233,13 +236,14 @@ public class SeamCarver {
             if( Math.abs(seam[r] - seam[r - 1]) > 1 ) throw new IllegalArgumentException();
         }
 
-        for(int r = 1; r < h; r++) {
-            if( seam[r] < 0 || seam[r] > h - 1 ) throw new IllegalArgumentException();
+        for(int r = 0; r < h; r++) {
+            if( seam[r] < 0 || seam[r] > w - 1 ) throw new IllegalArgumentException();
         }
 
         if ( w <= 1 ) throw new IllegalArgumentException();
 
         Picture np=new Picture(w-1,h);
+        double[][] ne=new double[w-1][h];
         for(int r = 0; r < h ; r++) {
             int jump=0;
             for(int c = 0; c < w - 1; c++) {
@@ -247,18 +251,28 @@ public class SeamCarver {
                     jump = 1;
                 }
                 np.set(c,r,picture.get(c+jump,r));
+                ne[c][r]=energy[c+jump][r];
             }
         }
+
         picture=np;
         w=w-1;
+
+        // recompute enery around the seam
+        for(int r = 0; r < h ; r++) {
+            if( seam[r] < w ) ne[seam[r]][r]=compute_energy(seam[r],r);
+            if( seam[r] > 0 ) ne[seam[r]-1][r]=compute_energy(seam[r]-1,r);
+            if( seam[r] < w - 1 ) ne[seam[r]+1][r]=compute_energy(seam[r]+1,r);
+        }
+        energy=ne;
     }
 
     //  unit testing (optional)
     public static void main(String[] args) {
         // test energy method
-        Picture p=new Picture("1x8.png");
+        Picture p=new Picture("6x5.png");
         SeamCarver sc=new SeamCarver(p);
-        //StdOut.println(sc.energy(1,2));
+        StdOut.println(sc.energy(2,3));
         StdOut.println( Arrays.toString(sc.findVerticalSeam() ) );
         StdOut.println( Arrays.toString(sc.findHorizontalSeam() ) );
         sc.removeHorizontalSeam(sc.findHorizontalSeam());
