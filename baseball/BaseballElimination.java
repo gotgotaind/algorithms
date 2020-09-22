@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 public class BaseballElimination {
     private final int nt;
-    private final String[] team;
-    private final HashMap<String,Integer> team_i;
-    private final int[] w,l,r;
+    private final String[] teams;
+    private final HashMap<String, Integer> team_i;
+    private final int[] w, l, r;
     private final int[][] g;
 
     public BaseballElimination(
@@ -18,8 +18,8 @@ public class BaseballElimination {
 
         nt = in.readInt();
 
-        team = new String[nt];
-        team_i = new HashMap<String,Integer>();
+        teams = new String[nt];
+        team_i = new HashMap<String, Integer>();
         w = new int[nt];
         l = new int[nt];
         r = new int[nt];
@@ -27,15 +27,15 @@ public class BaseballElimination {
 
         int i = 0;
         while (!in.isEmpty()) {
-            team[i] = in.readString();
-            team_i.put(team[i],i);
+            teams[i] = in.readString();
+            team_i.put(teams[i], i);
             w[i] = in.readInt();
             l[i] = in.readInt();
             r[i] = in.readInt();
-            for( int j = 0; j < nt ; j++ ) {
+            for (int j = 0; j < nt; j++) {
                 g[i][j] = in.readInt();
             }
-            i=i+1;
+            i = i+1;
         }
     }
 
@@ -46,30 +46,30 @@ public              int numberOfTeams()                        // number of team
 
 public Iterable<String> teams()                                // all teams
 {
-    return Arrays.asList(team);
+    return Arrays.asList(teams);
 }
 
 public              int wins(String team)                      // number of wins for given team
 {
-    if( ! team_i.containsKey(team) ) throw new IllegalArgumentException();
+    if (!team_i.containsKey(team)) throw new IllegalArgumentException();
     return w[team_i.get(team)];
 }
 
 public              int losses(String team)                    // number of losses for given team
 {
-    if( ! team_i.containsKey(team) ) throw new IllegalArgumentException();
+    if (!team_i.containsKey(team)) throw new IllegalArgumentException();
     return l[team_i.get(team)];
 }
 
 public              int remaining(String team)                 // number of remaining games for given team
 {
-    if( ! team_i.containsKey(team) ) throw new IllegalArgumentException();
+    if (!team_i.containsKey(team)) throw new IllegalArgumentException();
     return r[team_i.get(team)];
 }
 
 public              int against(String team1, String team2)    // number of remaining games between team1 and team2
 {
-    if( ! team_i.containsKey(team1) || ! team_i.containsKey(team2) ) throw new IllegalArgumentException();
+    if (!team_i.containsKey(team1) || !team_i.containsKey(team2)) throw new IllegalArgumentException();
     return g[team_i.get(team1)][team_i.get(team2)];
 }
 
@@ -79,11 +79,11 @@ public Iterable<String> certificateOfElimination(String team)  // subset R of te
  */
 
 public static void main(String[] args) {
-    BaseballElimination be=new BaseballElimination("teams4.txt");
+    BaseballElimination be = new BaseballElimination("teams4.txt");
     StdOut.println(be.numberOfTeams());
     StdOut.println(be.wins("Atlanta"));
     StdOut.println(be.losses("New_York"));
-    StdOut.println(be.against("Philadlphia","Montreal"));
+    StdOut.println(be.against("Philadlphia", "Montreal"));
 }
 
 }
