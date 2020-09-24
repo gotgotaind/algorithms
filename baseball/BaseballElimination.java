@@ -105,15 +105,32 @@ public class BaseballElimination {
                     certificateOfElimination[ti] = new ArrayList<String>();
                     ((ArrayList<String>) certificateOfElimination[ti]).add(teams[i]);
                     isComputed[ti] = true;
+                    // StdOut.println(teams[i]+" is trivially eliminated");
                     return;
                 }
             }
         }
 
+        // This is wrong because we don't want pairs of teams to appear twice
+        // in different order. For example, we want only one team a/team b vertex
+        // we don't want another team b / team a vertex
+        // int n_games_vertices = (nt-1)*(nt-1) - (nt-1);
 
-        int n_games_vertices = (nt-1)*(nt-1) - (nt-1);
+        // Compute the number of team a/team b vertices
+        // That's probably the number of arrangements nt-1/2
+        // But doesn't cost much to compute iteratively...
+        int n_games_vertices=0;
+        for (int i = 0; i < nt; i++) {
+            for (int j = i +1; j < nt; j++) {
+                if (i != ti && j != ti && i != j) {
+                    n_games_vertices=n_games_vertices+1;
+                }
+            }
+        }
 
-
+        String[] vn = new String[2 + n_games_vertices + (nt-1)];
+        vn[0]="s";
+        vn[2 + n_games_vertices + (nt-1)-1]="t";
 
         // 2 because there is the source and target vertices, nt-1 is the number of teams vertices
         FlowNetwork G = new FlowNetwork(2 + n_games_vertices + (nt-1) );
@@ -125,19 +142,21 @@ public class BaseballElimination {
                 team_vertex_id[i]=1+n_games_vertices+i;
                 FlowEdge e = new FlowEdge(team_vertex_id[i], G.V()-1, w[ti] + r[ti] - w[i]);
                 G.addEdge(e);
+                vn[team_vertex_id[i]]=teams[i];
             }
             else if (i > ti)
             {
                 team_vertex_id[i]=1+n_games_vertices+i-1;
                 FlowEdge e = new FlowEdge(team_vertex_id[i], G.V()-1, w[ti] + r[ti] - w[i]);
                 G.addEdge(e);
+                vn[team_vertex_id[i]]=teams[i];
             }
         }
 
         // connection the source vertex 0 to team i vs team j vertices ( excluding the team we're computing )
         int v = 1;
         for (int i = 0; i < nt; i++) {
-            for (int j = 0; j < nt; j++) {
+            for (int j = i + 1; j < nt; j++) {
                 if (i != ti && j != ti && i != j) {
                     // source to game vertices
                     FlowEdge e = new FlowEdge(0, v, g[i][j]);
@@ -147,14 +166,30 @@ public class BaseballElimination {
                     G.addEdge(e);
                     e = new FlowEdge(v, team_vertex_id[j], Double.POSITIVE_INFINITY);
                     G.addEdge(e);
+                    vn[v]=teams[i]+"-"+teams[j];
 
                     v = v + 1;
                 }
             }
         }
 
+        /*
+        for (int i = 0; i < nt; i++) {
+            if ( i!=ti ) {
+                StdOut.println(teams[i]+" edges");
+                for (FlowEdge e : G.adj(team_vertex_id[i])) {
+                    StdOut.println(vn[e.from()]+" to "+vn[e.to()]);
+                    StdOut.println(e);
+                }
+            }
+        }
+
+         */
+
+
         FordFulkerson ff = new FordFulkerson(G, 0, G.V() - 1);
         for (FlowEdge e : G.adj(0)) {
+            // StdOut.println(e);
             if( e.flow() < e.capacity() ) {
                 isEliminated[ti] = true;
                 isComputed[ti] = true;
@@ -174,11 +209,18 @@ public class BaseballElimination {
                 }
             }
         }
+        /*
+        StdOut.println("Edges of t");
+        for (FlowEdge e : G.adj(G.V()-1)) {
+            StdOut.println(e);
+        }
 
+         */
     }
 
     // is given team eliminated?
     public boolean isEliminated(String team) {
+        if( ! team_i.containsKey(team) ) throw new IllegalArgumentException();
         if (!isComputed[team_i.get(team)]) {
             compute(team);
         }
@@ -187,6 +229,7 @@ public class BaseballElimination {
 
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team)  {
+        if( ! team_i.containsKey(team) ) throw new IllegalArgumentException();
         if (!isComputed[team_i.get(team)]) {
             compute(team);
         }
@@ -203,6 +246,7 @@ public class BaseballElimination {
 
         BaseballElimination division = new BaseballElimination("teams5.txt");
         for (String team : division.teams()) {
+            //String team="Boston";
             if (division.isEliminated(team)) {
                 StdOut.print(team + " is eliminated by the subset R = { ");
                 for (String t : division.certificateOfElimination(team)) {
