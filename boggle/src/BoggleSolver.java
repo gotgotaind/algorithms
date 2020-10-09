@@ -19,34 +19,42 @@ public class BoggleSolver
         }
     }
 
-    private static int[] v_to_ij(int v, int ncols, int nrows) {
-        int[] r=new int[2];
-        r[0]=v-v/ncols*ncols;
-        r[1]=v/ncols;
-        return r;
+    private String p_to_s(ArrayList<Integer> p, myBoogleBoard mb) {
+        StringBuilder sb = new StringBuilder();
+        for(int v:p) {
+            int[] ij=mb.v_to_ij(v);
+            char c=mb.b.getLetter(ij[0],ij[1]);
+            if( c=='Q' ) c='[';
+            sb.append(c);
+
+        }
+        return sb.toString();
     }
 
-    private static int ij_to_v(int i, int j, int ncols, int rows) {
-        return i+j*ncols;
+    /*
+    private ArrayList<ArrayList<Integer>> evalp(ArrayList<Integer> cp, myBoogleBoard mb) {
+        String cw=p_to_s(cp,mb);
     }
+
+     */
+
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
-        Graph g=new Graph(board.cols()*board.rows());
-        int ncols=board.cols();
-        int nrows=board.rows();
-        for( int j=0; j<nrows; j++) {
-            for(int i=0; i<ncols; i++) {
-                for(int ii=-1; ii<=1; ii++ ) {
-                    for(int jj=-1; jj<=1; jj++ ) {
-                        if ( ( i+ii>0 ) && ( j+jj>0 ) && ( i+ii<ncols ) && ( j+jj<nrows ) && !( ii==0 && jj==0 ) ) {
-                            g.addEdge(ij_to_v(i,j,ncols,nrows),ij_to_v(i+ii,j+jj,ncols,nrows));
-                        }
-                    }
-                }
-            }
-        }
+        myBoogleBoard mb=new myBoogleBoard(board);
 
+        ArrayList<ArrayList<Integer>> sol = new ArrayList<>();
+
+        for( int v=0;  v<mb.g.V(); v++ ) {
+            ArrayList<Integer> cp=new ArrayList<Integer>();
+            cp.add(v);
+            /*
+            for( ArrayList<Integer> s:evalp(cp,mb)) {
+                sol.add(s);
+            }
+
+             */
+        }
         String[] a = new String[] {"a"};
         List<String> list = Arrays.asList(a);
         return list;
@@ -64,22 +72,41 @@ public class BoggleSolver
         BoggleSolver solver = new BoggleSolver(dictionary);
         BoggleBoard board = new BoggleBoard("file://../boards/board-aqua.txt");
 
-        /*
 
-        // test the ij_to_v and v_to_ij static methods
+        /*
+        // test the ij_to_v and v_to_ij  methods
         int ncols=board.cols();
         int nrows=board.rows();
+
+        myBoogleBoard mb = new myBoogleBoard(board);
         for( int j=0; j<nrows; j++) {
             for(int i=0; i<ncols; i++) {
-                StdOut.println("i: "+i+", j: "+j+", v: "+ij_to_v(i,j,ncols,nrows));
+                StdOut.println("i: "+i+", j: "+j+", v: "+mb.ij_to_v(i,j));
             }
         }
 
         for( int v=0; v<nrows*ncols; v++) {
-            StdOut.println("v: "+v+", i,j: "+Arrays.toString(v_to_ij(v,nrows,ncols)));
+            StdOut.println("v: "+v+", i,j: "+Arrays.toString(mb.v_to_ij(v)));
+        }
+
+        //  print the adjacent nodes
+        for( int v=0; v<nrows*ncols; v++) {
+            StdOut.println("v: "+v+", i,j: "+Arrays.toString(mb.v_to_ij(v)));
+            for(int vv:mb.g.adj(v)) {
+                StdOut.println("neib : "+Arrays.toString(mb.v_to_ij(vv)));
+            }
         }
 
          */
+
+        // test the p_to_s method
+        ArrayList<Integer> p=new ArrayList<>();
+        p.add(2);
+        p.add(3);
+        p.add(7);
+        myBoogleBoard mb = new myBoogleBoard(board);
+        StdOut.println(solver.p_to_s(p,mb));
+
 
         /*
         int score = 0;
