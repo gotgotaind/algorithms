@@ -9,34 +9,48 @@ import java.util.List;
 
 public class BoggleSolver
 {
-    private TrieSET t;
+    private myTrieSET t;
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
-        t=new TrieSET();
+        t=new myTrieSET();
         for( String w : dictionary ) {
             t.add(w.replace("QU","["));
         }
     }
 
+    private char char_at_v(int v, myBoogleBoard mb) {
+        int[] ij=mb.v_to_ij(v);
+        char c=mb.b.getLetter(ij[0],ij[1]);
+        if( c=='Q' ) c='[';
+        return c;
+    }
+
     private String p_to_s(ArrayList<Integer> p, myBoogleBoard mb) {
         StringBuilder sb = new StringBuilder();
         for(int v:p) {
-            int[] ij=mb.v_to_ij(v);
-            char c=mb.b.getLetter(ij[0],ij[1]);
-            if( c=='Q' ) c='[';
-            sb.append(c);
-
+            sb.append(char_at_v(v,mb));
         }
         return sb.toString();
     }
 
-    /*
-    private ArrayList<ArrayList<Integer>> evalp(ArrayList<Integer> cp, myBoogleBoard mb) {
-        String cw=p_to_s(cp,mb);
-    }
+    private void sol_search(myTrieSET.Node cn, ArrayList<Integer> cp,ArrayList<ArrayList<Integer>> sol,myBoogleBoard mb) {
+        if ( cn.isString == true ) {
+            sol.add(cp);
+            StdOut.println(p_to_s(cp,mb));
+        }
+        for(int v: mb.g.adj(cp.get(cp.size()-1))) {
+            if( ! cp.contains(v) ) {
+                for (char c = 0; c < myTrieSET.R; c++) {
+                    if( cn.next[c] != null ) {
+                        cp.add(v);
+                        sol_search( cn.next[c],cp,sol,mb );
+                    }
+                }
+            }
+        }
 
-     */
+    }
 
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
@@ -46,14 +60,12 @@ public class BoggleSolver
         ArrayList<ArrayList<Integer>> sol = new ArrayList<>();
 
         for( int v=0;  v<mb.g.V(); v++ ) {
-            ArrayList<Integer> cp=new ArrayList<Integer>();
-            cp.add(v);
-            /*
-            for( ArrayList<Integer> s:evalp(cp,mb)) {
-                sol.add(s);
+            myTrieSET.Node cn=t.root.next[char_at_v(v,mb)];
+            if( cn != null ) {
+                ArrayList<Integer> cp = new ArrayList<Integer>();
+                cp.add(v);
+                sol_search(cn, cp, sol, mb);
             }
-
-             */
         }
         String[] a = new String[] {"a"};
         List<String> list = Arrays.asList(a);
@@ -107,6 +119,7 @@ public class BoggleSolver
         myBoogleBoard mb = new myBoogleBoard(board);
         StdOut.println(solver.p_to_s(p,mb));
 
+        solver.getAllValidWords(board);
 
         /*
         int score = 0;
