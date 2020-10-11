@@ -1,11 +1,13 @@
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.TrieSET;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class BoggleSolver
 {
@@ -26,27 +28,34 @@ public class BoggleSolver
         return c;
     }
 
-    private String p_to_s(ArrayList<Integer> p, myBoogleBoard mb) {
+    private String p_to_s(List<Integer> p, myBoogleBoard mb) {
         StringBuilder sb = new StringBuilder();
         for(int v:p) {
-            sb.append(char_at_v(v,mb));
+            char c=char_at_v(v,mb);
+            if( c=='[' ) {
+                sb.append("Q");
+                sb.append("U");
+            }
+            else {
+                sb.append(c);
+            }
         }
         return sb.toString();
     }
 
-    private void sol_search(myTrieSET.Node cn, ArrayList<Integer> cp,ArrayList<ArrayList<Integer>> sol,myBoogleBoard mb) {
+    private void sol_search(myTrieSET.Node cn, ArrayList<Integer> cp,List<List<Integer>> sol,myBoogleBoard mb ) {
         if ( cn.isString == true ) {
-            sol.add(cp);
-            StdOut.println(p_to_s(cp,mb));
+            sol.add(new ArrayList<Integer>(cp));
+            //StdOut.println(cp.toString());
+            //StdOut.println(p_to_s(cp,mb));
         }
         for(int v: mb.g.adj(cp.get(cp.size()-1))) {
             if( ! cp.contains(v) ) {
-                for (char c = 0; c < myTrieSET.R; c++) {
+                    char c=char_at_v(v,mb);
                     if( cn.next[c] != null ) {
                         cp.add(v);
-                        sol_search( cn.next[c],cp,sol,mb );
+                        sol_search(cn.next[c], cp, sol, mb);
                     }
-                }
             }
         }
 
@@ -57,7 +66,7 @@ public class BoggleSolver
     public Iterable<String> getAllValidWords(BoggleBoard board) {
         myBoogleBoard mb=new myBoogleBoard(board);
 
-        ArrayList<ArrayList<Integer>> sol = new ArrayList<>();
+        List<List<Integer>> sol = new ArrayList<>();
 
         for( int v=0;  v<mb.g.V(); v++ ) {
             myTrieSET.Node cn=t.root.next[char_at_v(v,mb)];
@@ -67,9 +76,15 @@ public class BoggleSolver
                 sol_search(cn, cp, sol, mb);
             }
         }
-        String[] a = new String[] {"a"};
-        List<String> list = Arrays.asList(a);
-        return list;
+
+        // convert sol ( list of solution as path in the graph ) to a string set
+        SET<String> sol_s=new SET<String>();
+        //StdOut.println("Solutions :");
+        for( List<Integer> s:sol ) {
+            //StdOut.println(s.toString());
+            sol_s.add(p_to_s(s,mb));
+        }
+        return sol_s;
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
@@ -79,11 +94,12 @@ public class BoggleSolver
     }
 
     public static void main(String[] args) {
+        //In in = new In("file://../dictionaries/dictionary-algs4.txt");
         In in = new In("file://../dictionaries/mydic.txt");
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
+        //BoggleBoard board = new BoggleBoard("file://../boards/board-q.txt");
         BoggleBoard board = new BoggleBoard("file://../boards/board-aqua.txt");
-
 
         /*
         // test the ij_to_v and v_to_ij  methods
@@ -110,7 +126,7 @@ public class BoggleSolver
         }
 
          */
-
+        /*
         // test the p_to_s method
         ArrayList<Integer> p=new ArrayList<>();
         p.add(2);
@@ -118,8 +134,10 @@ public class BoggleSolver
         p.add(7);
         myBoogleBoard mb = new myBoogleBoard(board);
         StdOut.println(solver.p_to_s(p,mb));
-
-        solver.getAllValidWords(board);
+        */
+        for( String s:solver.getAllValidWords(board)) {
+            StdOut.println(s);
+        }
 
         /*
         int score = 0;
