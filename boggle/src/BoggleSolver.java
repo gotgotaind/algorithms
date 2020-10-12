@@ -53,8 +53,10 @@ public class BoggleSolver
             if( ! cp.contains(v) ) {
                     char c=char_at_v(v,mb);
                     if( cn.next[c] != null ) {
-                        cp.add(v);
-                        sol_search(cn.next[c], cp, sol, mb);
+                        ArrayList<Integer> ncp=new ArrayList<>(cp);
+                        ncp.add(v);
+
+                        sol_search(cn.next[c], ncp, sol, mb);
                     }
             }
         }
@@ -94,12 +96,12 @@ public class BoggleSolver
     }
 
     public static void main(String[] args) {
-        //In in = new In("file://../dictionaries/dictionary-algs4.txt");
-        In in = new In("file://../dictionaries/mydic.txt");
+        In in = new In("file://../dictionaries/dictionary-algs4.txt");
+        //In in = new In("file://../dictionaries/mydic.txt");
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
-        //BoggleBoard board = new BoggleBoard("file://../boards/board-q.txt");
-        BoggleBoard board = new BoggleBoard("file://../boards/board-aqua.txt");
+        BoggleBoard board = new BoggleBoard("file://../boards/board-q.txt");
+        //BoggleBoard board = new BoggleBoard("file://../boards/board-aqua.txt");
 
         /*
         // test the ij_to_v and v_to_ij  methods
@@ -116,16 +118,17 @@ public class BoggleSolver
         for( int v=0; v<nrows*ncols; v++) {
             StdOut.println("v: "+v+", i,j: "+Arrays.toString(mb.v_to_ij(v)));
         }
-
+        */
         //  print the adjacent nodes
-        for( int v=0; v<nrows*ncols; v++) {
+        myBoogleBoard mb = new myBoogleBoard(board);
+        for( int v=0; v<mb.nrows*mb.ncols; v++) {
             StdOut.println("v: "+v+", i,j: "+Arrays.toString(mb.v_to_ij(v)));
             for(int vv:mb.g.adj(v)) {
                 StdOut.println("neib : "+Arrays.toString(mb.v_to_ij(vv)));
             }
         }
 
-         */
+
         /*
         // test the p_to_s method
         ArrayList<Integer> p=new ArrayList<>();

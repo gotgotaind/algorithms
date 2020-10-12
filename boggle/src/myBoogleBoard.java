@@ -13,7 +13,7 @@ public class myBoogleBoard {
             for(int i=0; i<ncols; i++) {
                 for(int ii=-1; ii<=1; ii++ ) {
                     for(int jj=-1; jj<=1; jj++ ) {
-                        if ( ( i+ii>0 ) && ( j+jj>0 ) && ( i+ii<ncols ) && ( j+jj<nrows ) && !( ii==0 && jj==0 ) ) {
+                        if ( ( i+ii>=0 ) && ( j+jj>=0 ) && ( i+ii<ncols ) && ( j+jj<nrows ) && !( ii==0 && jj==0 ) ) {
                             g.addEdge(ij_to_v(i,j),ij_to_v(i+ii,j+jj));
                         }
                     }
