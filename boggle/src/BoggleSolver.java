@@ -23,7 +23,7 @@ public class BoggleSolver
 
     private char char_at_v(int v, myBoogleBoard mb) {
         int[] ij=mb.v_to_ij(v);
-        char c=mb.b.getLetter(ij[0],ij[1]);
+        char c=mb.b.getLetter(ij[1],ij[0]);
         if( c=='Q' ) c='[';
         return c;
     }
@@ -43,8 +43,9 @@ public class BoggleSolver
         return sb.toString();
     }
 
-    private void sol_search(myTrieSET.Node cn, ArrayList<Integer> cp,List<List<Integer>> sol,myBoogleBoard mb ) {
-        if ( cn.isString == true ) {
+    private void sol_search(myTrieSET.Node cn, ArrayList<Integer> cp,int wl, List<List<Integer>> sol,myBoogleBoard mb ) {
+        if ( cn.isString == true && wl >2 ) {
+
             sol.add(new ArrayList<Integer>(cp));
             //StdOut.println(cp.toString());
             //StdOut.println(p_to_s(cp,mb));
@@ -52,11 +53,21 @@ public class BoggleSolver
         for(int v: mb.g.adj(cp.get(cp.size()-1))) {
             if( ! cp.contains(v) ) {
                     char c=char_at_v(v,mb);
-                    if( cn.next[c] != null ) {
-                        ArrayList<Integer> ncp=new ArrayList<>(cp);
-                        ncp.add(v);
 
-                        sol_search(cn.next[c], ncp, sol, mb);
+                    if( cn.next[c-myTrieSET.o] != null ) {
+                        //ArrayList<Integer> ncp=new ArrayList<>(cp);
+                        cp.add(v);
+                        wl=wl+1;
+                        if ( c == '[' ) {
+                            wl=wl+1;
+                        }
+                        sol_search(cn.next[c-myTrieSET.o], cp, wl, sol, mb);
+
+                        cp.remove(cp.size()-1);
+                        wl=wl-1;
+                        if ( c == '[' ) {
+                            wl=wl-1;
+                        }
                     }
             }
         }
@@ -71,11 +82,21 @@ public class BoggleSolver
         List<List<Integer>> sol = new ArrayList<>();
 
         for( int v=0;  v<mb.g.V(); v++ ) {
-            myTrieSET.Node cn=t.root.next[char_at_v(v,mb)];
+            char c=char_at_v(v,mb);
+
+            // we have to keep track of word length use to check if the word is a
+            // valid word of at least 3 letters. Taking into account that Qu counts
+            // as 2 letters
+            int wl=1;
+            if ( c == '[' ) {
+                wl=2;
+            }
+
+            myTrieSET.Node cn=t.root.next[c-myTrieSET.o];
             if( cn != null ) {
                 ArrayList<Integer> cp = new ArrayList<Integer>();
                 cp.add(v);
-                sol_search(cn, cp, sol, mb);
+                sol_search(cn, cp, wl, sol, mb);
             }
         }
 
@@ -92,15 +113,28 @@ public class BoggleSolver
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word) {
-        return 2;
+        if ( ! t.contains(word.replace("QU","[")) ) {
+            return 0;
+        }
+        //StdOut.println(word);
+        int len=word.length();
+
+        if( len == 3 || len == 4 ) {
+            return 1;
+        }
+        if( len == 5 ) return 2;
+        if( len == 6 ) return 3;
+        if( len == 7 ) return 5;
+        if( len >= 8 ) return 11;
+        return 0;
     }
 
     public static void main(String[] args) {
-        In in = new In("file://../dictionaries/dictionary-algs4.txt");
+        In in = new In("file://../dictionaries/dictionary-16q.txt");
         //In in = new In("file://../dictionaries/mydic.txt");
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
-        BoggleBoard board = new BoggleBoard("file://../boards/board-q.txt");
+        BoggleBoard board = new BoggleBoard("file://../boards/board-16q.txt");
         //BoggleBoard board = new BoggleBoard("file://../boards/board-aqua.txt");
 
         /*
@@ -119,6 +153,7 @@ public class BoggleSolver
             StdOut.println("v: "+v+", i,j: "+Arrays.toString(mb.v_to_ij(v)));
         }
         */
+/*
         //  print the adjacent nodes
         myBoogleBoard mb = new myBoogleBoard(board);
         for( int v=0; v<mb.nrows*mb.ncols; v++) {
@@ -127,7 +162,7 @@ public class BoggleSolver
                 StdOut.println("neib : "+Arrays.toString(mb.v_to_ij(vv)));
             }
         }
-
+*/
 
         /*
         // test the p_to_s method
@@ -138,10 +173,14 @@ public class BoggleSolver
         myBoogleBoard mb = new myBoogleBoard(board);
         StdOut.println(solver.p_to_s(p,mb));
         */
+
+/*
         for( String s:solver.getAllValidWords(board)) {
             StdOut.println(s);
         }
-
+*/
+        StdOut.println(solver.scoreOf("AZEDD"));
+        StdOut.println(solver.scoreOf("QUQU"));
         /*
         int score = 0;
         for (String word : solver.getAllValidWords(board)) {
