@@ -39,8 +39,8 @@ import java.util.Iterator;
  *  @author Kevin Wayne
  */
 public class myTrieSET implements Iterable<String> {
-    public static final int R = 256;        // extended ASCII
-
+    public static final int R = 27;        // A-Z[
+    public static final int o = 65;        // offset to reduce alphabet to A-Z[
     public Node root;      // root of trie
     private int n;          // number of keys in trie
 
@@ -74,7 +74,7 @@ public class myTrieSET implements Iterable<String> {
         if (x == null) return null;
         if (d == key.length()) return x;
         char c = key.charAt(d);
-        return get(x.next[c], key, d+1);
+        return get(x.next[c-o], key, d+1);
     }
 
     /**
@@ -95,7 +95,7 @@ public class myTrieSET implements Iterable<String> {
         }
         else {
             char c = key.charAt(d);
-            x.next[c] = add(x.next[c], key, d+1);
+            x.next[c-o] = add(x.next[c-o], key, d+1);
         }
         return x;
     }
@@ -144,7 +144,7 @@ public class myTrieSET implements Iterable<String> {
         if (x.isString) results.enqueue(prefix.toString());
         for (char c = 0; c < R; c++) {
             prefix.append(c);
-            collect(x.next[c], prefix, results);
+            collect(x.next[c-o], prefix, results);
             prefix.deleteCharAt(prefix.length() - 1);
         }
     }
@@ -174,13 +174,13 @@ public class myTrieSET implements Iterable<String> {
         if (c == '.') {
             for (char ch = 0; ch < R; ch++) {
                 prefix.append(ch);
-                collect(x.next[ch], prefix, pattern, results);
+                collect(x.next[ch-o], prefix, pattern, results);
                 prefix.deleteCharAt(prefix.length() - 1);
             }
         }
         else {
             prefix.append(c);
-            collect(x.next[c], prefix, pattern, results);
+            collect(x.next[c-o], prefix, pattern, results);
             prefix.deleteCharAt(prefix.length() - 1);
         }
     }
@@ -209,7 +209,7 @@ public class myTrieSET implements Iterable<String> {
         if (x.isString) length = d;
         if (d == query.length()) return length;
         char c = query.charAt(d);
-        return longestPrefixOf(x.next[c], query, d+1, length);
+        return longestPrefixOf(x.next[c-o], query, d+1, length);
     }
 
     /**
@@ -230,13 +230,13 @@ public class myTrieSET implements Iterable<String> {
         }
         else {
             char c = key.charAt(d);
-            x.next[c] = delete(x.next[c], key, d+1);
+            x.next[c-o] = delete(x.next[c-o], key, d+1);
         }
 
         // remove subtrie rooted at x if it is completely empty
         if (x.isString) return x;
         for (int c = 0; c < R; c++)
-            if (x.next[c] != null)
+            if (x.next[c-o] != null)
                 return x;
         return null;
     }

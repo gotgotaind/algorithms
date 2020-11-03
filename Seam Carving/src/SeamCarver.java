@@ -244,11 +244,15 @@ public class SeamCarver {
 
         Picture np=new Picture(w-1,h);
         double[][] ne=new double[w-1][h];
-        for(int r = 0; r < h ; r++) {
+        for(int c = 0; c < w - 1; c++) {
             int jump=0;
-            for(int c = 0; c < w - 1; c++) {
-                if( c == seam[r] ) {
+            for(int r = 0; r < h ; r++) {
+                if( c >= seam[r] ) {
                     jump = 1;
+                }
+                else
+                {
+                    jump = 0;
                 }
                 np.set(c,r,picture.get(c+jump,r));
                 ne[c][r]=energy[c+jump][r];
