@@ -58,15 +58,14 @@ public class MoveToFront {
             char c = BinaryStdIn.readChar();
             BinaryStdOut.write(ci[c]);
 
-            int i = 0;
-            char t0 = ci[c];
-            char t1 = ci[i];
+            char t0=ci[0];
+            ci[0]=ci[c];
+            char t1=ci[1];
 
-            while (t1 != ci[c]) {
-                t1 = ci[i];
-                ci[i] = t0;
-                t0 = t1;
-                i = i + 1;
+            for(int i=0; i<c; i++) {
+                t1=ci[i+1];
+                ci[i+1]=t0;
+                t0=t1;
             }
 
 
