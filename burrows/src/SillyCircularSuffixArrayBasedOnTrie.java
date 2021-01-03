@@ -2,19 +2,33 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.TrieSET;
 import edu.princeton.cs.algs4.TrieST;
 
-public class CircularSuffixArray {
+public class SillyCircularSuffixArrayBasedOnTrie {
 
     int l;
     String s;
     int[] index;
 
     // circular suffix array of s
-    public CircularSuffixArray(String s) {
+    public SillyCircularSuffixArrayBasedOnTrie(String s) {
         l=s.length();
         this.s=s;
         index=new int[l];
-        char[] ca=s.toCharArray();
 
+
+        TrieSET ts=new TrieSET();
+        TrieST<Integer> tst = new TrieST<Integer>();
+
+        for(int i=0; i<l; i++) {
+            String ics=this.ics(i);
+            ts.add(ics);
+            tst.put(ics,i);
+        }
+
+        int i=0;
+        for(String ss:ts) {
+            index[i]=tst.get(ss);
+            i++;
+        }
 
     }
 
@@ -41,7 +55,7 @@ public class CircularSuffixArray {
     // unit testing (required)
     public static void main(String[] args) {
         // CircularSuffixArray c=new CircularSuffixArray("ABRACADABRA!");
-        CircularSuffixArray c=new CircularSuffixArray("ABABABABABAB");
+        SillyCircularSuffixArrayBasedOnTrie c=new SillyCircularSuffixArrayBasedOnTrie("ABABABABABAB");
         for(int i=0; i<c.length(); i++ ) {
             StdOut.println(c.ics(i)+"\t"+c.index[i]);
         }
