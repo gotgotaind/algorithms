@@ -50,22 +50,22 @@ public class SortCompare
         int n = 214;  // number of possible values max int = 2147483647
         //Double[] a = new Double[N];
 
-        Integer[] a = new Integer[N];
-        int[] b = new int[N];
-        for (int t = 0; t < T; t++)
-        { // Perform one experiment (generate and sort an array).
-            for (int i = 0; i < N; i++) {
-                // a[i] = StdRandom.uniform();
-                b[i] = StdRandom.uniform(n);
-                a[i] = (Integer) b[i];
-            }
-            if ( alg == "LSD" || alg == "MSD") {
-                total += timeLSD(alg, b);
-            }
-            else {
+        for (int t = 0; t < T; t++) { // Perform one experiment (generate and sort an array).
+            if (alg == "LSD" || alg == "MSD") {
+                int[] a = new int[N];
+                for (int i = 0; i < N; i++) {
+                    a[i] = StdRandom.uniform(n);
+                }
+                total += timeLSD(alg, a);
+                if ( ! isSorted(a) ) throw new RuntimeException();
+            } else {
+                Integer[] a = new Integer[N];
+                for (int i = 0; i < N; i++) {
+                    a[i] = StdRandom.uniform(n);
+                }
                 total += time(alg, a);
+                if ( ! isSorted(a) ) throw new RuntimeException();
             }
-
         }
         return total;
     }
@@ -101,7 +101,7 @@ public class SortCompare
 
     public static void main(String[] args)
     {
-        String alg1 = "Merge";
+        String alg1 = "Quick3way";
         String alg2 = "LSD";
         int N = Integer.parseInt("100000000");
         int T = Integer.parseInt("1");
