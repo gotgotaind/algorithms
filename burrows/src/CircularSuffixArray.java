@@ -15,18 +15,18 @@ public class CircularSuffixArray {
         this.s=new String(s);
         index=new int[l];
         ics[] icsa=new ics[l];
-        StdOut.println("icsa before sorting :");
+        // StdOut.println("icsa before sorting :");
         for(Integer i=0; i<l; i++) {
             icsa[i]=new ics(s,i);
-            StdOut.println(icsa[i].icss());
+            // StdOut.println(icsa[i].icss());
         }
 
         Quick.sort(icsa);
 
-        StdOut.println("icsa after sorting :");
+        // StdOut.println("icsa after sorting :");
         for(Integer i=0; i<l; i++) {
             index[i]=icsa[i].ith;
-            StdOut.println(icsa[i].icss());
+            // StdOut.println(icsa[i].icss());
         }
     }
 
@@ -51,7 +51,7 @@ public class CircularSuffixArray {
         }
 
         public int compareTo(ics icst){
-            StdOut.println("A: "+this.icss()+" B: "+icst.icss()+" :"+this.icss().compareTo(icst.icss()));
+            // StdOut.println("A: "+this.icss()+" B: "+icst.icss()+" :"+this.icss().compareTo(icst.icss()));
             return this.icss().compareTo(icst.icss());
         }
     }
