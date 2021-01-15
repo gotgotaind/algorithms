@@ -5,9 +5,9 @@ import edu.princeton.cs.algs4.TrieST;
 
 public class CircularSuffixArray {
 
-    int l;
-    String s;
-    int[] index;
+    private int l;
+    private String s;
+    private int[] index;
 
     // circular suffix array of s
     public CircularSuffixArray(String s) {
@@ -57,7 +57,7 @@ public class CircularSuffixArray {
     }
 
     // also add this ics method in the parent class in order to be able to print the ith circular string
-    public String ics_debug(Integer ii) {
+    private String ics_debug(Integer ii) {
         char[] sca=s.toCharArray();
         char[] icsa=new char[l];
 
