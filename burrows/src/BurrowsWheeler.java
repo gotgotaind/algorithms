@@ -87,8 +87,8 @@ public class BurrowsWheeler {
         }
 
         // reconstruct the original string provided first and next[]
-        BinaryStdOut.write(first);
-        int nexti=next[0];
+        //BinaryStdOut.write(first);
+        int nexti=first;
         for(int i=1; i<l; i++) {
             char nextc=fc[nexti];
             BinaryStdOut.write(nextc);
