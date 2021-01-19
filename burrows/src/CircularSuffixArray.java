@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class CircularSuffixArray {
 
     private int l;
-    private char[] ss;
+    private char[] ca;
     private int[] index;
 
     // circular suffix array of s
@@ -22,16 +22,17 @@ public class CircularSuffixArray {
         // making a char array of the original string copied twice
         // so that we can take slice of it to make the circular
         // char arrays
-        this.ss=(s+s).toCharArray();
+        this.ca=(s+s).toCharArray();
         index=new int[l];
         ics[] icsa=new ics[l];
         // StdOut.println("icsa before sorting :");
         for(Integer i=0; i<l; i++) {
-            icsa[i]=new ics(ss,i);
+            icsa[i]=new ics(i);
             // StdOut.println(icsa[i].icss());
         }
 
-        Merge.sort(icsa);
+
+        Arrays.sort(icsa);
 
         // StdOut.println("icsa after sorting :");
         for(Integer i=0; i<l; i++) {
@@ -43,23 +44,16 @@ public class CircularSuffixArray {
     // ith circular suffix
     private class ics implements Comparable<ics> {
         Integer ith;
-        char[] ss;
 
-        public ics(char[] ss,int ith) {
-            this.ss=ss;
+        public ics(int ith) {
             this.ith=ith;
-        }
-
-        public String icss() {;
-            char[] icsa= Arrays.copyOfRange(ss,ith,ith+l);
-            return new String(icsa);
         }
 
         public int compareTo(ics icst){
             // StdOut.println("A: "+this.icss()+" B: "+icst.icss()+" :"+this.icss().compareTo(icst.icss()));
             // return this.icss().compareTo(icst.icss());
             for(int i=0; i<l; i++) {
-                int result = ss[i+ith] - ss[i+icst.ith];
+                int result = ca[i+ith] - ca[i+icst.ith];
                 if( result != 0 ) return result;
             }
             return 0;
@@ -68,7 +62,7 @@ public class CircularSuffixArray {
 
     // also add this ics method in the parent class in order to be able to print the ith circular string
     private String ics_debug(Integer ith) {
-        char[] icsa= Arrays.copyOfRange(ss,ith,ith+l);
+        char[] icsa= Arrays.copyOfRange(ca,ith,ith+l);
         return new String(icsa);
     }
 
@@ -94,16 +88,16 @@ public class CircularSuffixArray {
 
         Stopwatch timer = new Stopwatch();
         // random ascii
-        CircularSuffixArray c=new CircularSuffixArray(sb.toString());
+        // CircularSuffixArray c=new CircularSuffixArray(sb.toString());
         // abra.txt
-        // CircularSuffixArray c=new CircularSuffixArray("ABRACADABRA!");
+        CircularSuffixArray c=new CircularSuffixArray("ABRACADABRA!");
         // cadabra.txt
         // CircularSuffixArray c=new CircularSuffixArray("CADABRA!ABRA");
         //CircularSuffixArray c=new CircularSuffixArray("ABABABABABAB");
         //CircularSuffixArray c=new CircularSuffixArray("ABAB");
 
         for(int i=0; i<c.length(); i++ ) {
-            // StdOut.println(c.ics_debug(c.index[i])+"\t"+c.index[i]);
+            StdOut.println(c.ics_debug(c.index[i])+"\t"+c.index[i]);
         }
         StdOut.println("Finished in "+timer.elapsedTime());
 
