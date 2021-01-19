@@ -1,4 +1,6 @@
+import edu.princeton.cs.algs4.Merge;
 import edu.princeton.cs.algs4.Quick;
+import edu.princeton.cs.algs4.Quick3way;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.Stopwatch;
@@ -29,7 +31,7 @@ public class CircularSuffixArray {
             // StdOut.println(icsa[i].icss());
         }
 
-        Quick.sort(icsa);
+        Merge.sort(icsa);
 
         // StdOut.println("icsa after sorting :");
         for(Integer i=0; i<l; i++) {
@@ -55,7 +57,12 @@ public class CircularSuffixArray {
 
         public int compareTo(ics icst){
             // StdOut.println("A: "+this.icss()+" B: "+icst.icss()+" :"+this.icss().compareTo(icst.icss()));
-            return this.icss().compareTo(icst.icss());
+            // return this.icss().compareTo(icst.icss());
+            for(int i=0; i<l; i++) {
+                int result = ss[i+ith] - ss[i+icst.ith];
+                if( result != 0 ) return result;
+            }
+            return 0;
         }
     }
 
@@ -96,7 +103,7 @@ public class CircularSuffixArray {
         //CircularSuffixArray c=new CircularSuffixArray("ABAB");
 
         for(int i=0; i<c.length(); i++ ) {
-            //StdOut.println(c.ics_debug(c.index[i])+"\t"+c.index[i]);
+            // StdOut.println(c.ics_debug(c.index[i])+"\t"+c.index[i]);
         }
         StdOut.println("Finished in "+timer.elapsedTime());
 
